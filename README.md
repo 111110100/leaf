@@ -315,7 +315,7 @@ npm uninstall -g @rivolink/leaf
 
 Thanks to all contributors.
 
-![Contributors](https://contrib.rocks/image?repo=RivoLink/leaf&t=717807600)
+![Contributors](https://contrib.rocks/image?repo=RivoLink/leaf&t=717807601)
 
 ## Support
 
