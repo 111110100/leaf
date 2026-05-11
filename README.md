@@ -127,13 +127,16 @@ claude "explain Rust lifetimes" | leaf
 cat TESTING.md | leaf
 ```
 
-## Using with VIM
-To configure keybindings with `vim` that opens a vertical split and run `leaf -w` to preview current markdown file. The shortcut **\md** (pressing `\` followed by `md`). Pressing **CTRL+w,h** moves the focus back to the main Markdown file for editing. Add the following to your `~/.vimrc` file:
+## VIM Integration
+
+Add the following to your `~/.vimrc` to preview the current Markdown file in a vertical split::
 
 ```vim
-" Pressing <Leader>m will open a vertical split on the right and run leaf
+" Preview the current Markdown file in a vertical split using leaf
 nnoremap <Leader>md :vertical botright terminal leaf -w %<CR>
 ```
+
+Once added, use `\md` to open a live preview. To switch focus back to the Markdown buffer, press `Ctrl+w,h`.
 
 ## Inline Mode
 
