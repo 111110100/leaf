@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-version -->
 
+## [[1.22.0](https://github.com/RivoLink/leaf/releases/tag/1.22.0)] - 2026-05-13
+
+### Added
+
+- shell auto-completion ([#134](https://github.com/RivoLink/leaf/pull/134))
+
 ## [[1.21.2](https://github.com/RivoLink/leaf/releases/tag/1.21.2)] - 2026-05-13
 
 ### Fixed
