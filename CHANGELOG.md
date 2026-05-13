@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-version -->
 
+## [[1.21.2](https://github.com/RivoLink/leaf/releases/tag/1.21.2)] - 2026-05-13
+
+### Fixed
+
+- open in editor iTerm2 ([#132](https://github.com/RivoLink/leaf/pull/132))
+- editor path with spaces ([#131](https://github.com/RivoLink/leaf/pull/131))
+- syntax alias fallbacks ([#130](https://github.com/RivoLink/leaf/pull/130))
+- long paragraphs cutoff ([#129](https://github.com/RivoLink/leaf/pull/129))
+- toc highlight on last header ([#128](https://github.com/RivoLink/leaf/pull/128))
+
+### Changed
+
+- fallback url for migration ([#133](https://github.com/RivoLink/leaf/pull/133))
+
 ## [[1.21.1](https://github.com/RivoLink/leaf/releases/tag/1.21.1)] - 2026-05-12
 
 ### Docs
