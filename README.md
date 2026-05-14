@@ -11,29 +11,29 @@
   <sub>See more screenshots in the <a href="demo/README.md">features</a> demo</sub>
 </p>
 
-## Install <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/RivoLink/leaf/total?color=5fc894" >
+## Install
 
 Install the latest published binary.
 
-macOS / Linux / Android / Termux:
+**macOS / Linux / Android / Termux:**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/RivoLink/leaf/main/scripts/install.sh | sh
 ```
 
-Windows:
+**Windows:**
 
 ```powershell
 irm https://raw.githubusercontent.com/RivoLink/leaf/main/scripts/install.ps1 | iex
 ```
 
-npm:
+**npm:**
 
 ```bash
 npm install -g @rivolink/leaf
 ```
 
-ArchLinux (AUR):
+**ArchLinux (AUR):**
 
 Use an [AUR helper](https://wiki.archlinux.org/title/AUR_helpers), such as `yay`:
 
@@ -41,7 +41,7 @@ Use an [AUR helper](https://wiki.archlinux.org/title/AUR_helpers), such as `yay`
 yay -S leaf-markdown-viewer
 ```
 
-Verify the installation:
+**Verify the installation:**
 
 ```bash
 leaf --version
@@ -51,7 +51,7 @@ leaf --version
 
 Update an existing installation to the latest published release.
 
-Self:
+**Self:**
 
 ```bash
 leaf --update
@@ -61,7 +61,7 @@ leaf --update
 
 On Windows, if replacing the running `.exe` is blocked by the OS, rerun the PowerShell installer from the install section.
 
-npm:
+**npm:**
 
 ```bash
 npm update -g @rivolink/leaf
@@ -99,16 +99,6 @@ claude "explain Rust lifetimes" | leaf
 cat TESTING.md | leaf
 ```
 
-## Vim Integration
-Add the following to your `~/.vimrc` to preview the current Markdown file in a vertical split:
-
-```vim
-" Preview the current Markdown file in a vertical split using leaf
-nnoremap <Leader>md :vertical botright terminal leaf -w %<CR>
-```
-
-Once added, use `\md` to open a live preview. To switch focus back to the Markdown buffer, press `Ctrl+w,h`.
-
 ## Inline Mode
 
 Render Markdown directly to **stdout** without the interactive TUI:
@@ -143,17 +133,27 @@ Enable Tab completion for all arguments:
 leaf --auto-complete
 ```
 
-Supports bash, zsh, fish, and PowerShell. Restart your shell to activate.
+Supports **bash**, **zsh**, **fish**, and **PowerShell**. Restart your shell to activate.
+
+## Vim Integration
+Add the following to your `~/.vimrc` to preview the current Markdown file in a vertical split:
+
+```vim
+" Preview the current Markdown file in a vertical split using leaf
+nnoremap <Leader>md :vertical botright terminal leaf -w %<CR>
+```
+
+Once added, use `\md` to open a live preview. To switch focus back to the Markdown buffer, press `Ctrl+w,h`.
 
 ## Configuration
 
-Set default values for theme, editor, and watch mode via `config.toml`:
+Set default values for **theme**, **editor**, **watch** mode and **extra** file types via `config.toml`:
 
 ```bash
 leaf --config
 ```
 
-This opens the configuration file in your editor. If the file does not exist yet, leaf creates it with documented defaults.
+This opens the configuration file in your editor. If the file does not exist yet, **leaf** creates it with documented defaults.
 
 ```toml
 theme = "ocean"          # arctic, forest, ocean, solarized-dark, or a custom theme file
@@ -230,6 +230,8 @@ See [`gruvbox.toml`](gruvbox.toml) for a complete example with all available col
 | `Ctrl+E` | Open in editor |
 | `Ctrl+P` | Open fuzzy picker |
 | `Ctrl+F` / `/` | Find |
+| `Ctrl+Click` | Open link |
+| `Dbl-Click` | Copy link |
 | `n` / `N` | Next / prev match |
 | `?` | Show help popup |
 | `r` | Force reload (watch mode) |
@@ -264,7 +266,7 @@ leaf --watch notes.md
 
 ### Windows: missing Visual C++ runtime
 
-If `leaf.exe` does not start on Windows and reports a missing MSVC runtime, install the latest supported Microsoft Visual C++ Redistributable from Microsoft Learn:
+If `leaf.exe` does not start on Windows or reports a missing MSVC runtime, install the latest supported Microsoft Visual C++ Redistributable from Microsoft Learn:
 
 - https://learn.microsoft.com/fr-fr/cpp/windows/latest-supported-vc-redist?view=msvc-170
 
@@ -286,19 +288,19 @@ irm https://raw.githubusercontent.com/RivoLink/leaf/main/scripts/install.ps1 | i
 
 ## Uninstall
 
-macOS / Linux / Android / Termux:
+**macOS / Linux / Android / Termux:**
 
 ```bash
 rm -f ~/.local/bin/leaf
 ```
 
-Windows:
+**Windows:**
 
 ```powershell
 Remove-Item "$env:LOCALAPPDATA\Programs\leaf\leaf.exe" -Force
 ```
 
-npm:
+**npm:**
 
 ```bash
 npm uninstall -g @rivolink/leaf
@@ -308,7 +310,7 @@ npm uninstall -g @rivolink/leaf
 
 Thanks to all contributors.
 
-![Contributors](https://contrib.rocks/image?repo=RivoLink/leaf&t=717807600)
+![Contributors](https://stg.contrib.rocks/image?repo=RivoLink/leaf&t=717807600)
 
 ## Support
 
