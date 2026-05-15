@@ -163,15 +163,32 @@ fn main() -> Result<()> {
 
     let mut open_browser_picker_dir = None;
     let mut open_fuzzy_picker_dir = None;
+    let mut dir_arg = None;
     let (src, filename, filepath) = if let Some(f) = file_arg {
         let path = PathBuf::from(&f);
-        let content = std::fs::read_to_string(&path)
-            .with_context(|| format!("Cannot read: {}", path.display()))?;
-        let name = path
-            .file_name()
-            .map(|n| n.to_string_lossy().to_string())
-            .unwrap_or(f.clone());
-        (content, name, Some(path))
+        if path.is_dir() {
+            let label = path
+                .file_name()
+                .map(|name| name.to_string_lossy().to_string())
+                .unwrap_or_else(|| path.display().to_string());
+            if picker {
+                open_browser_picker_dir = Some(path.clone());
+            } else {
+                open_fuzzy_picker_dir = Some(path.clone());
+            }
+            dir_arg = Some(path);
+            (String::new(), label, None)
+        } else if picker {
+            anyhow::bail!("--picker cannot be combined with a file path");
+        } else {
+            let content = std::fs::read_to_string(&path)
+                .with_context(|| format!("Cannot read: {}", path.display()))?;
+            let name = path
+                .file_name()
+                .map(|n| n.to_string_lossy().to_string())
+                .unwrap_or(f);
+            (content, name, Some(path))
+        }
     } else {
         if io::stdin().is_terminal() {
             let cwd = std::env::current_dir().context("Cannot read current directory")?;
@@ -270,6 +287,9 @@ fn main() -> Result<()> {
     app.set_file_mode(file_mode);
     app.set_editor_config(Some(resolved_editor));
     app.set_config_warning(config_warning);
+    if let Some(dir) = dir_arg {
+        app.set_dir_arg(dir);
+    }
     if let Some(dir) = open_browser_picker_dir {
         app.queue_file_picker(dir);
     }
