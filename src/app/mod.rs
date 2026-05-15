@@ -86,6 +86,7 @@ pub(crate) struct App {
     watch_from_config: bool,
     watch_error: bool,
     pub(super) filepath: Option<PathBuf>,
+    dir_arg: Option<PathBuf>,
     pub(super) last_file_state: Option<FileState>,
     pub(super) last_content_hash: u64,
     pub(super) last_hash_check: Option<Instant>,
@@ -199,6 +200,7 @@ impl App {
             watch_from_config: false,
             watch_error: false,
             filepath,
+            dir_arg: None,
             last_file_state,
             last_content_hash: 0,
             last_hash_check: None,
@@ -506,7 +508,14 @@ impl App {
         self.filepath.is_some() || !self.source.is_empty()
     }
 
+    pub(crate) fn set_dir_arg(&mut self, dir: PathBuf) {
+        self.dir_arg = Some(dir);
+    }
+
     pub(crate) fn picker_dir(&self) -> PathBuf {
+        if let Some(ref dir) = self.dir_arg {
+            return dir.clone();
+        }
         std::env::current_dir()
             .ok()
             .or_else(|| {

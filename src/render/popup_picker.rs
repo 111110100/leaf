@@ -103,7 +103,7 @@ pub(super) fn render_file_popup(f: &mut Frame, app: &App) {
             } else {
                 theme.ui.toc_bg
             };
-            let marker = if selected { "▸ " } else { "  " };
+            let marker = if selected { "▎ " } else { "  " };
             let label_spans = if app.is_fuzzy_file_picker() {
                 highlighted_picker_label(
                     entry.label(),

@@ -19,7 +19,7 @@ pub(crate) struct CliOptions {
 }
 
 pub(crate) fn usage_text() -> &'static str {
-    "Usage:  leaf [OPTIONS] [file.md]\n\
+    "Usage:  leaf [OPTIONS] [file.md | directory]\n\
      \x20       leaf [--watch] --picker\n\
      \x20       leaf --update\n\
      \x20       echo '# Hello' | leaf\n\
@@ -135,13 +135,6 @@ pub(crate) fn parse_cli(args: &[String]) -> Result<CliOptions> {
             || options.editor.is_some();
         if has_other {
             anyhow::bail!("{name} must be used on its own");
-        }
-    }
-
-    if options.picker {
-        let has_non_picker_flags = options.file_arg.is_some();
-        if has_non_picker_flags {
-            anyhow::bail!("--picker cannot be combined with a file path");
         }
     }
 
