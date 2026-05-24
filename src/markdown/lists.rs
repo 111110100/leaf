@@ -26,8 +26,9 @@ pub(super) fn list_item_prefix(
     list_stack: &[ListKind],
     item_stack: &mut [ItemState],
     theme: &MarkdownTheme,
+    marker_color: Option<ratatui::style::Color>,
 ) -> Vec<Span<'static>> {
-    let mut prefix = block_prefix(in_bq, theme);
+    let mut prefix = block_prefix(in_bq, theme, marker_color);
     let Some(item) = item_stack.last_mut() else {
         return prefix;
     };
@@ -71,6 +72,7 @@ pub(super) fn list_item_prefix(
     prefix
 }
 
+#[allow(clippy::too_many_arguments)]
 pub(super) fn flush_list_item_spans(
     lines: &mut Vec<Line<'static>>,
     spans: &mut Vec<Span<'static>>,
@@ -79,13 +81,26 @@ pub(super) fn flush_list_item_spans(
     blockquote_depth: usize,
     render_width: usize,
     theme: &MarkdownTheme,
+    marker_color: Option<ratatui::style::Color>,
 ) {
     if spans.is_empty() {
         return;
     }
 
-    let first_prefix = list_item_prefix(blockquote_depth > 0, list_stack, item_stack, theme);
-    let continuation_prefix = list_item_prefix(blockquote_depth > 0, list_stack, item_stack, theme);
+    let first_prefix = list_item_prefix(
+        blockquote_depth > 0,
+        list_stack,
+        item_stack,
+        theme,
+        marker_color,
+    );
+    let continuation_prefix = list_item_prefix(
+        blockquote_depth > 0,
+        list_stack,
+        item_stack,
+        theme,
+        marker_color,
+    );
     push_wrapped_prefixed_lines(
         lines,
         spans,
@@ -123,6 +138,7 @@ pub(super) fn start_item(item_stack: &mut Vec<ItemState>) {
     });
 }
 
+#[allow(clippy::too_many_arguments)]
 pub(super) fn end_item(
     lines: &mut Vec<Line<'static>>,
     spans: &mut Vec<Span<'static>>,
@@ -131,6 +147,7 @@ pub(super) fn end_item(
     blockquote_depth: usize,
     render_width: usize,
     theme: &MarkdownTheme,
+    marker_color: Option<ratatui::style::Color>,
 ) {
     flush_list_item_spans(
         lines,
@@ -140,6 +157,7 @@ pub(super) fn end_item(
         blockquote_depth,
         render_width,
         theme,
+        marker_color,
     );
     item_stack.pop();
     if let Some(ListKind::Ordered(next)) = list_stack.last_mut() {

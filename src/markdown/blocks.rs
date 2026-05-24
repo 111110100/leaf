@@ -15,12 +15,14 @@ use super::width::display_width;
 use super::wrapping::{push_wrapped_code_lines, push_wrapped_prefixed_lines};
 use super::LastBlock;
 
-pub(super) fn block_prefix(in_bq: bool, theme: &MarkdownTheme) -> Vec<Span<'static>> {
+pub(super) fn block_prefix(
+    in_bq: bool,
+    theme: &MarkdownTheme,
+    marker_color: Option<Color>,
+) -> Vec<Span<'static>> {
     if in_bq {
-        vec![Span::styled(
-            "▏ ",
-            Style::default().fg(theme.blockquote_marker),
-        )]
+        let color = marker_color.unwrap_or(theme.blockquote_marker);
+        vec![Span::styled("▏ ", Style::default().fg(color))]
     } else {
         vec![]
     }
@@ -31,11 +33,13 @@ pub(super) fn push_wrapped_blockquote_lines(
     body_spans: &mut Vec<Span<'static>>,
     render_width: usize,
     theme: &MarkdownTheme,
+    marker_color: Option<Color>,
 ) {
-    let prefix = block_prefix(true, theme);
+    let prefix = block_prefix(true, theme, marker_color);
     push_wrapped_prefixed_lines(lines, body_spans, prefix.clone(), prefix, render_width);
 }
 
+#[allow(clippy::too_many_arguments)]
 pub(super) fn flush_wrapped_spans(
     lines: &mut Vec<Line<'static>>,
     spans: &mut Vec<Span<'static>>,
@@ -44,13 +48,25 @@ pub(super) fn flush_wrapped_spans(
     item_stack: &mut [ItemState],
     render_width: usize,
     theme: &MarkdownTheme,
+    marker_color: Option<Color>,
 ) {
     if blockquote_depth > 0 && item_stack.is_empty() {
-        push_wrapped_blockquote_lines(lines, spans, render_width, theme);
+        push_wrapped_blockquote_lines(lines, spans, render_width, theme, marker_color);
     } else if !item_stack.is_empty() {
-        let first_prefix = list_item_prefix(blockquote_depth > 0, list_stack, item_stack, theme);
-        let continuation_prefix =
-            list_item_prefix(blockquote_depth > 0, list_stack, item_stack, theme);
+        let first_prefix = list_item_prefix(
+            blockquote_depth > 0,
+            list_stack,
+            item_stack,
+            theme,
+            marker_color,
+        );
+        let continuation_prefix = list_item_prefix(
+            blockquote_depth > 0,
+            list_stack,
+            item_stack,
+            theme,
+            marker_color,
+        );
         push_wrapped_prefixed_lines(
             lines,
             spans,
@@ -156,9 +172,10 @@ pub(super) fn push_code_block_lines(
             ctx.list_stack,
             item_stack,
             ctx.theme_colors,
+            None,
         )
     } else if ctx.blockquote_depth > 0 {
-        block_prefix(true, ctx.theme_colors)
+        block_prefix(true, ctx.theme_colors, None)
     } else {
         Vec::new()
     };
@@ -261,9 +278,9 @@ pub(super) fn push_special_block_lines<F: Fn(&str) -> Vec<Span<'static>>>(
     let show_line_numbers = ctx.show_line_numbers;
     let center = ctx.center;
     let prefix = if !item_stack.is_empty() {
-        list_item_prefix(blockquote_depth > 0, list_stack, item_stack, theme)
+        list_item_prefix(blockquote_depth > 0, list_stack, item_stack, theme, None)
     } else if blockquote_depth > 0 {
-        block_prefix(true, theme)
+        block_prefix(true, theme, None)
     } else {
         Vec::new()
     };
