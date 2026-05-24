@@ -168,6 +168,11 @@ theme_overrides!(MarkdownThemeOverrides for MarkdownTheme {
     mark_bg,
     task_checked,
     task_unchecked,
+    alert_note,
+    alert_tip,
+    alert_important,
+    alert_warning,
+    alert_caution,
 });
 
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Eq)]

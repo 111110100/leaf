@@ -117,6 +117,11 @@ pub(super) const BASE_LIGHT_MARKDOWN: MarkdownTheme = MarkdownTheme {
     mark_bg: Color::Rgb(255, 248, 140),
     task_checked: Color::Rgb(48, 140, 98),
     task_unchecked: Color::Rgb(158, 164, 172),
+    alert_note: Color::Rgb(58, 108, 168),
+    alert_tip: Color::Rgb(48, 140, 98),
+    alert_important: Color::Rgb(128, 68, 148),
+    alert_warning: Color::Rgb(176, 128, 48),
+    alert_caution: Color::Rgb(188, 74, 74),
 };
 
 pub(super) const BASE_DARK_MARKDOWN: MarkdownTheme = MarkdownTheme {
@@ -160,6 +165,11 @@ pub(super) const BASE_DARK_MARKDOWN: MarkdownTheme = MarkdownTheme {
     mark_bg: Color::Rgb(80, 68, 20),
     task_checked: Color::Rgb(95, 200, 148),
     task_unchecked: Color::Rgb(100, 100, 110),
+    alert_note: Color::Rgb(88, 152, 238),
+    alert_tip: Color::Rgb(95, 200, 148),
+    alert_important: Color::Rgb(200, 160, 225),
+    alert_warning: Color::Rgb(210, 180, 120),
+    alert_caution: Color::Rgb(218, 95, 95),
 };
 
 pub(crate) const ARCTIC_THEME: AppTheme = AppTheme {
@@ -246,6 +256,11 @@ pub(crate) const FOREST_THEME: AppTheme = AppTheme {
         mark_bg: Color::Rgb(72, 62, 18),
         task_checked: Color::Rgb(120, 198, 148),
         task_unchecked: Color::Rgb(90, 100, 92),
+        alert_note: Color::Rgb(110, 182, 255),
+        alert_tip: Color::Rgb(120, 198, 148),
+        alert_important: Color::Rgb(192, 162, 218),
+        alert_warning: Color::Rgb(224, 190, 126),
+        alert_caution: Color::Rgb(224, 120, 120),
     },
 };
 
@@ -333,5 +348,10 @@ pub(crate) const SOLARIZED_DARK_THEME: AppTheme = AppTheme {
         mark_bg: Color::Rgb(62, 54, 8),
         task_checked: Color::Rgb(133, 153, 0),
         task_unchecked: Color::Rgb(88, 110, 117),
+        alert_note: Color::Rgb(38, 139, 210),
+        alert_tip: Color::Rgb(133, 153, 0),
+        alert_important: Color::Rgb(108, 113, 196),
+        alert_warning: Color::Rgb(181, 137, 0),
+        alert_caution: Color::Rgb(220, 50, 47),
     },
 };

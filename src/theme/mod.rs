@@ -114,6 +114,11 @@ pub(crate) struct MarkdownTheme {
     pub(crate) mark_bg: Color,
     pub(crate) task_checked: Color,
     pub(crate) task_unchecked: Color,
+    pub(crate) alert_note: Color,
+    pub(crate) alert_tip: Color,
+    pub(crate) alert_important: Color,
+    pub(crate) alert_warning: Color,
+    pub(crate) alert_caution: Color,
 }
 
 pub(crate) const DEFAULT_PRESET: ThemePreset = ThemePreset::OceanDark;

@@ -25,9 +25,11 @@ pub(crate) use width::line_plain_text;
 pub(crate) use width::{build_searchable_lines, display_width, truncate_display_width};
 
 use crate::theme::MarkdownTheme;
-use pulldown_cmark::{CodeBlockKind, Event as MdEvent, HeadingLevel, Options, Parser, Tag, TagEnd};
+use pulldown_cmark::{
+    BlockQuoteKind, CodeBlockKind, Event as MdEvent, HeadingLevel, Options, Parser, Tag, TagEnd,
+};
 use ratatui::{
-    style::Style,
+    style::{Color, Modifier, Style},
     text::{Line, Span},
 };
 use std::{
@@ -132,6 +134,7 @@ fn start_code_block(
     };
 }
 
+#[allow(clippy::too_many_arguments)]
 fn end_paragraph(
     lines: &mut Vec<Line<'static>>,
     spans: &mut Vec<Span<'static>>,
@@ -140,6 +143,7 @@ fn end_paragraph(
     item_stack: &mut [ItemState],
     render_width: usize,
     theme: &MarkdownTheme,
+    marker_color: Option<Color>,
 ) {
     flush_wrapped_spans(
         lines,
@@ -149,6 +153,7 @@ fn end_paragraph(
         item_stack,
         render_width,
         theme,
+        marker_color,
     );
     lines.push(Line::from(""));
 }
@@ -158,17 +163,36 @@ fn end_blockquote(
     spans: &mut Vec<Span<'static>>,
     blockquote_depth: &mut usize,
     theme: &MarkdownTheme,
+    marker_color: Option<Color>,
 ) {
     if !spans.is_empty() {
-        let mut all = vec![Span::styled(
-            "▏ ",
-            Style::default().fg(theme.blockquote_marker),
-        )];
+        let color = marker_color.unwrap_or(theme.blockquote_marker);
+        let mut all = vec![Span::styled("▏ ", Style::default().fg(color))];
         all.append(spans);
         lines.push(Line::from(all));
     }
     *blockquote_depth = blockquote_depth.saturating_sub(1);
     lines.push(Line::from(""));
+}
+
+fn alert_icon_label(kind: BlockQuoteKind) -> (&'static str, &'static str) {
+    match kind {
+        BlockQuoteKind::Note => ("[i]", "Note"),
+        BlockQuoteKind::Tip => ("[*]", "Tip"),
+        BlockQuoteKind::Important => ("[!]", "Important"),
+        BlockQuoteKind::Warning => ("[!]", "Warning"),
+        BlockQuoteKind::Caution => ("[x]", "Caution"),
+    }
+}
+
+fn alert_color(kind: BlockQuoteKind, theme: &MarkdownTheme) -> Color {
+    match kind {
+        BlockQuoteKind::Note => theme.alert_note,
+        BlockQuoteKind::Tip => theme.alert_tip,
+        BlockQuoteKind::Important => theme.alert_important,
+        BlockQuoteKind::Warning => theme.alert_warning,
+        BlockQuoteKind::Caution => theme.alert_caution,
+    }
 }
 
 fn rule_width(render_width: usize, indent: usize) -> usize {
@@ -235,6 +259,7 @@ pub(crate) fn parse_markdown_with_width(
     let mut table: Option<TableBuf> = None;
     let mut last_block = LastBlock::Other;
     let mut link_urls: Vec<String> = Vec::new();
+    let mut blockquote_color: Option<Color> = None;
 
     let normalized = normalize_code_fences(src);
     for ev in Parser::new_ext(&normalized, Options::all()) {
@@ -282,6 +307,7 @@ pub(crate) fn parse_markdown_with_width(
                     &mut item_stack,
                     render_width,
                     theme_colors,
+                    blockquote_color,
                 );
                 last_block = LastBlock::Paragraph;
             }
@@ -344,11 +370,29 @@ pub(crate) fn parse_markdown_with_width(
             MdEvent::Code(text) => {
                 push_inline_code_span(&mut spans, text.as_ref(), theme_colors);
             }
-            MdEvent::Start(Tag::BlockQuote(_)) => {
+            MdEvent::Start(Tag::BlockQuote(kind)) => {
                 blockquote_depth += 1;
+                if let Some(k) = kind {
+                    let color = alert_color(k, theme_colors);
+                    blockquote_color = Some(color);
+                    let (icon, label) = alert_icon_label(k);
+                    lines.push(Line::from(vec![
+                        Span::styled("▏ ", Style::default().fg(color)),
+                        Span::styled(
+                            format!("{icon} {label}"),
+                            Style::default().fg(color).add_modifier(Modifier::BOLD),
+                        ),
+                    ]));
+                }
             }
             MdEvent::End(TagEnd::BlockQuote(_)) => {
-                end_blockquote(&mut lines, &mut spans, &mut blockquote_depth, theme_colors);
+                end_blockquote(
+                    &mut lines,
+                    &mut spans,
+                    &mut blockquote_depth,
+                    theme_colors,
+                    blockquote_color.take(),
+                );
                 last_block = LastBlock::Other;
             }
             MdEvent::Start(Tag::List(start)) => {
@@ -361,6 +405,7 @@ pub(crate) fn parse_markdown_with_width(
                         blockquote_depth,
                         render_width,
                         theme_colors,
+                        blockquote_color,
                     );
                 }
                 start_list(&mut lines, last_block, &mut list_stack, start);
@@ -382,6 +427,7 @@ pub(crate) fn parse_markdown_with_width(
                     blockquote_depth,
                     render_width,
                     theme_colors,
+                    blockquote_color,
                 );
                 last_block = LastBlock::Other;
             }
@@ -409,6 +455,7 @@ pub(crate) fn parse_markdown_with_width(
                     &mut item_stack,
                     render_width,
                     theme_colors,
+                    blockquote_color,
                 );
             }
             MdEvent::SoftBreak | MdEvent::HardBreak => {}
