@@ -127,8 +127,11 @@ fn main() -> Result<()> {
         run_update()?;
         return Ok(());
     }
-    if options.config {
-        config::run_config()?;
+    if let Some(ref config_action) = options.config {
+        match config_action {
+            cli::ConfigAction::Open => config::run_config()?,
+            cli::ConfigAction::Reset => config::reset_config()?,
+        }
         return Ok(());
     }
     if let Some(ref ac_arg) = options.auto_complete {

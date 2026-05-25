@@ -3,6 +3,12 @@ use anyhow::{bail, Result};
 use crate::inline::{self, InlineSpec};
 
 #[derive(Debug, PartialEq, Eq)]
+pub(crate) enum ConfigAction {
+    Open,
+    Reset,
+}
+
+#[derive(Debug, PartialEq, Eq)]
 pub(crate) struct AutoCompleteArg {
     pub(crate) shell: Option<String>,
     pub(crate) dump: bool,
@@ -13,7 +19,7 @@ pub(crate) struct CliOptions {
     pub(crate) picker: bool,
     pub(crate) watch: bool,
     pub(crate) update: bool,
-    pub(crate) config: bool,
+    pub(crate) config: Option<ConfigAction>,
     pub(crate) auto_complete: Option<AutoCompleteArg>,
     pub(crate) debug_input: bool,
     pub(crate) print_help: bool,
@@ -40,7 +46,7 @@ pub(crate) fn usage_text() -> &'static str {
      \x20     --inline [SPEC]          Render to stdout (no TUI) [ansi|plain][:<width>]\n\
      \x20     --width <N>              Set maximum content width (min: 20)\n\
      \x20     --picker                 Open the file browser picker\n\
-     \x20     --config                 Open configuration file in editor\n\
+     \x20     --config [reset]         Open or reset configuration file\n\
      \x20     --update                 Update leaf to the latest version\n\
      \x20     --auto-complete [SPEC]   Install or dump shell completions [bash|zsh|fish|powershell][:dump]"
 }
@@ -76,7 +82,16 @@ pub(crate) fn parse_cli(args: &[String]) -> Result<CliOptions> {
             "--picker" => options.picker = true,
             "--watch" | "-w" => options.watch = true,
             "--update" => options.update = true,
-            "--config" => options.config = true,
+            "--config" => {
+                let action = match iter.peek() {
+                    Some(next) if next.as_str() == "reset" => {
+                        iter.next();
+                        ConfigAction::Reset
+                    }
+                    _ => ConfigAction::Open,
+                };
+                options.config = Some(action);
+            }
             "--auto-complete" => {
                 let ac_arg = match iter.peek() {
                     Some(next) if !next.starts_with('-') => {
@@ -148,7 +163,7 @@ pub(crate) fn parse_cli(args: &[String]) -> Result<CliOptions> {
 
     let standalone = [
         (options.update, "--update"),
-        (options.config, "--config"),
+        (options.config.is_some(), "--config"),
         (options.auto_complete.is_some(), "--auto-complete"),
     ];
     let standalone_count = standalone.iter().filter(|(set, _)| *set).count();

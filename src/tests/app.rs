@@ -66,7 +66,7 @@ fn parse_cli_accepts_config_on_its_own() {
     let args = vec!["leaf".to_string(), "--config".to_string()];
     let options = parse_cli(&args).unwrap();
 
-    assert!(options.config);
+    assert_eq!(options.config, Some(cli::ConfigAction::Open));
     assert!(!options.update);
     assert!(!options.watch);
     assert_eq!(options.file_arg, None);
@@ -94,6 +94,29 @@ fn parse_cli_rejects_update_with_config() {
 
     let err = parse_cli(&args).unwrap_err();
     assert!(err.to_string().contains("must be used on its own"));
+}
+
+#[test]
+fn parse_cli_config_reset() {
+    let args = vec![
+        "leaf".to_string(),
+        "--config".to_string(),
+        "reset".to_string(),
+    ];
+    let options = parse_cli(&args).unwrap();
+    assert_eq!(options.config, Some(cli::ConfigAction::Reset));
+}
+
+#[test]
+fn parse_cli_rejects_config_reset_with_other_flags() {
+    let args = vec![
+        "leaf".to_string(),
+        "--config".to_string(),
+        "reset".to_string(),
+        "--watch".to_string(),
+    ];
+    let err = parse_cli(&args).unwrap_err();
+    assert!(err.to_string().contains("--config must be used on its own"));
 }
 
 #[test]

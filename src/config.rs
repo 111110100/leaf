@@ -1,5 +1,6 @@
 use std::{
     collections::BTreeMap,
+    io::{self, Write as _},
     path::{Path, PathBuf},
 };
 
@@ -108,6 +109,28 @@ pub(crate) fn run_config() -> anyhow::Result<()> {
     open_config_in_editor(&path)
 }
 
+pub(crate) fn reset_config() -> anyhow::Result<()> {
+    let path = config_path().context("Cannot determine config directory")?;
+
+    let (old_config, _) = load_config(&CliOverrides::default());
+    let editor = crate::editor::resolve_editor(None, old_config.editor.as_deref());
+
+    print!("Reset configuration to defaults? (y/N): ");
+    io::stdout().flush()?;
+    let mut answer = String::new();
+    io::stdin().read_line(&mut answer)?;
+
+    if !answer.trim().eq_ignore_ascii_case("y") {
+        println!("Reset cancelled.");
+        return Ok(());
+    }
+
+    write_default_config(&path)?;
+    println!("Configuration reset: {}", path.display());
+    launch_editor(&editor, &path);
+    Ok(())
+}
+
 fn write_default_config(dest: &Path) -> anyhow::Result<()> {
     if let Some(parent) = dest.parent() {
         std::fs::create_dir_all(parent)
@@ -120,16 +143,17 @@ fn write_default_config(dest: &Path) -> anyhow::Result<()> {
 fn open_config_in_editor(path: &Path) -> anyhow::Result<()> {
     let (config, _) = load_config(&CliOverrides::default());
     let editor = crate::editor::resolve_editor(None, config.editor.as_deref());
+    launch_editor(&editor, path);
+    Ok(())
+}
 
-    if try_launch_editor(&editor, path) {
-        return Ok(());
+fn launch_editor(editor: &str, path: &Path) {
+    if try_launch_editor(editor, path) {
+        return;
     }
-
-    if let Some(fallback) = crate::editor::resolve_fallback_editor(&editor) {
+    if let Some(fallback) = crate::editor::resolve_fallback_editor(editor) {
         try_launch_editor(fallback, path);
     }
-
-    Ok(())
 }
 
 fn try_launch_editor(editor: &str, path: &Path) -> bool {
