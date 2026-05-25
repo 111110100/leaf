@@ -1161,9 +1161,9 @@ dependencies = [
 
 [[package]]
 name = "mmdflux"
-version = "2.4.2"
+version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bbe0fc0a189f8195f70426e89bba6860c4b0522e153803da020266a6c9b2c588"
+checksum = "13cc93a18eab6efeee21308e7ea8f2e01391ec0596ddf800d5cf2b102bf312b0"
 dependencies = [
  "clap",
  "libc",
@@ -1174,7 +1174,9 @@ dependencies = [
  "thiserror 2.0.18",
  "tracing",
  "tracing-subscriber",
+ "unicode-width",
  "windows-sys 0.52.0",
+ "xterm-color",
 ]
 
 [[package]]
@@ -3049,6 +3051,12 @@ name = "writeable"
 version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1ffae5123b2d3fc086436f8834ae3ab053a283cfac8fe0a0b8eaae044768a4c4"
+
+[[package]]
+name = "xterm-color"
+version = "1.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7008a9d8ba97a7e47d9b2df63fcdb8dade303010c5a7cd5bf2469d4da6eba673"
 
 [[package]]
 name = "yoke"
