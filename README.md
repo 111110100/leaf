@@ -162,6 +162,12 @@ watch = false            # auto-reload when opening a file
 extras = ["txt", "rs"]   # extra file types shown in the picker
 ```
 
+To reset the configuration to defaults:
+
+```bash
+leaf --config reset
+```
+
 All settings are optional. CLI arguments always take priority. See [`config.toml`](config.toml) for details.
 
 ## Extra Files
