@@ -20,6 +20,10 @@ _leaf() {
             COMPREPLY=($(compgen -W "reset" -- "$cur"))
             return
             ;;
+        --auto-complete)
+            COMPREPLY=($(compgen -W "bash zsh fish powershell" -- "$cur"))
+            return
+            ;;
     esac
 
     if [[ "$cur" == -* ]]; then

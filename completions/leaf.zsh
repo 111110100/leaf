@@ -18,7 +18,7 @@ _leaf() {
         '--picker[Open the file browser picker]'
         '--config[Open or reset configuration file]::action:(reset)'
         '--update[Update leaf to the latest version]'
-        '--auto-complete[Install shell completions for leaf]'
+        '--auto-complete[Install or dump shell completions]::shell:(bash zsh fish powershell)'
     )
 
     _arguments -s $flags '*:markdown file:_files -g "*.md"'
