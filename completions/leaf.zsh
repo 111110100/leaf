@@ -16,7 +16,7 @@ _leaf() {
         '--inline[Render to stdout (no TUI)]:format:(ansi plain)'
         '--width[Set maximum content width (min: 20)]:width:'
         '--picker[Open the file browser picker]'
-        '--config[Open configuration file in editor]'
+        '--config[Open or reset configuration file]::action:(reset)'
         '--update[Update leaf to the latest version]'
         '--auto-complete[Install shell completions for leaf]'
     )

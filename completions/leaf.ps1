@@ -34,6 +34,13 @@ $global:LeafCompleter = {
                 }
             return
         }
+        '--config' {
+            @('reset') |
+                Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+                }
+            return
+        }
     }
 
     if ($wordToComplete -like '-*') {
