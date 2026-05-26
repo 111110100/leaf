@@ -16,6 +16,10 @@ _leaf() {
             COMPREPLY=($(compgen -W "ansi plain" -- "$cur"))
             return
             ;;
+        --config)
+            COMPREPLY=($(compgen -W "reset" -- "$cur"))
+            return
+            ;;
     esac
 
     if [[ "$cur" == -* ]]; then
