@@ -18,10 +18,7 @@ impl App {
     }
 
     pub(crate) fn has_code_syntax(ext: &str, ss: &SyntaxSet) -> bool {
-        let plain = ss.find_syntax_plain_text();
-        ss.find_syntax_by_extension(ext)
-            .or_else(|| ss.find_syntax_by_token(ext))
-            .is_some_and(|s| s.name != plain.name)
+        crate::markdown::resolve_syntax(ext, ss).name != ss.find_syntax_plain_text().name
     }
 
     pub(crate) fn fence_wrap(src: &str, ext: &str) -> String {
