@@ -58,9 +58,11 @@ $global:LeafCompleter = {
                 [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
             }
     } else {
-        Get-ChildItem -Filter '*.md' -File 2>$null |
+        Get-ChildItem 2>$null |
             Where-Object { $_.Name -like "$wordToComplete*" } | ForEach-Object {
-                [System.Management.Automation.CompletionResult]::new($_.Name, $_.Name, 'ProviderItem', $_.FullName)
+                $type = if ($_.PSIsContainer) { 'ProviderContainer' } else { 'ProviderItem' }
+                $name = if ($_.PSIsContainer) { $_.Name + '\' } else { $_.Name }
+                [System.Management.Automation.CompletionResult]::new($name, $_.Name, $type, $_.FullName)
             }
     }
 }
