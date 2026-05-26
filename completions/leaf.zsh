@@ -21,7 +21,7 @@ _leaf() {
         '--auto-complete[Install or dump shell completions]::shell:(bash zsh fish powershell)'
     )
 
-    _arguments -s $flags '*:markdown file:_files -g "*.md"'
+    _arguments -s $flags '*:file:_files'
 }
 
 compdef _leaf leaf

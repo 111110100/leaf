@@ -1,5 +1,3 @@
-complete -c leaf -f
-
 complete -c leaf -s h -l help -d "Show help message and exit"
 complete -c leaf -s V -l version -d "Show version information and exit"
 complete -c leaf -s w -l watch -d "Watch file for changes and reload"
@@ -12,4 +10,4 @@ complete -c leaf -l config -x -a "reset" -d "Open or reset configuration file"
 complete -c leaf -l update -d "Update leaf to the latest version"
 complete -c leaf -l auto-complete -x -a "bash zsh fish powershell" -d "Install or dump shell completions"
 
-complete -c leaf -F -a "(__fish_complete_suffix .md)"
+complete -c leaf -F

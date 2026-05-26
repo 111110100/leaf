@@ -31,7 +31,7 @@ _leaf() {
         return
     fi
 
-    COMPREPLY=($(compgen -f -X '!*.md' -- "$cur"))
+    COMPREPLY=($(compgen -f -- "$cur"))
 }
 
-complete -F _leaf leaf
+complete -o filenames -F _leaf leaf
