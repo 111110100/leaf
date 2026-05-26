@@ -42,7 +42,7 @@ pub(crate) fn resolve_syntax<'a>(
         "py" | "python" => &["Python", "py", "python"],
         "c" => &["C", "c"],
         "cpp" | "cxx" | "cc" | "c++" => &["C++", "cpp", "cxx", "cc"],
-        "json" => &["JSON", "json"],
+        "json" | "json5" => &["JSON", "json"],
         "toml" => &["TOML", "toml", "YAML", "yml", "yaml"],
         "java" => &["Java", "java"],
         "kt" | "kotlin" => &["Kotlin", "kt", "kotlin", "Java", "java"],

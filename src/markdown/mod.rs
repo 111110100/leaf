@@ -17,7 +17,6 @@ mod wrapping;
 
 pub(crate) use highlight::highlight_line;
 pub(crate) use links::LinkSpan;
-#[cfg(test)]
 pub(crate) use syntax::resolve_syntax;
 use tables::{handle_table_event, start_table, TableBuf};
 #[cfg(test)]

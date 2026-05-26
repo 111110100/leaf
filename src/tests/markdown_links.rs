@@ -219,6 +219,7 @@ fn resolve_syntax_supports_common_language_aliases() {
         resolve_syntax("c++", &ss).name
     );
     assert_eq!(resolve_syntax("json", &ss).name, "JSON");
+    assert_eq!(resolve_syntax("json5", &ss).name, "JSON");
     assert_eq!(
         resolve_syntax("ps1", &ss).name,
         resolve_syntax("powershell", &ss).name
