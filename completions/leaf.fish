@@ -10,6 +10,6 @@ complete -c leaf -l width -x -d "Set maximum content width (min: 20)"
 complete -c leaf -l picker -d "Open the file browser picker"
 complete -c leaf -l config -x -a "reset" -d "Open or reset configuration file"
 complete -c leaf -l update -d "Update leaf to the latest version"
-complete -c leaf -l auto-complete -d "Install shell completions for leaf"
+complete -c leaf -l auto-complete -x -a "bash zsh fish powershell" -d "Install or dump shell completions"
 
 complete -c leaf -F -a "(__fish_complete_suffix .md)"
