@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-version -->
 
+## [[1.23.1](https://github.com/RivoLink/leaf/releases/tag/1.23.1)] - 2026-05-26
+
+### Fixed
+
+- dirs and files shell completion ([#161](https://github.com/RivoLink/leaf/pull/161))
+
+### Changed
+
+- auto-complete args shell completion ([#160](https://github.com/RivoLink/leaf/pull/160))
+- config reset shell completion ([#159](https://github.com/RivoLink/leaf/pull/159))
+- update help shortcuts ([#157](https://github.com/RivoLink/leaf/pull/157))
+- support reset configurations ([#155](https://github.com/RivoLink/leaf/pull/155))
+- update mmdflux to 2.5.0 ([#154](https://github.com/RivoLink/leaf/pull/154))
+
 ## [[1.23.0](https://github.com/RivoLink/leaf/releases/tag/1.23.0)] - 2026-05-24
 
 ### Added
