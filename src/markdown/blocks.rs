@@ -401,7 +401,15 @@ pub(super) fn push_latex_block_lines(
     item_stack: &mut [ItemState],
 ) {
     let rendered = latex::to_unicode(content);
-    let content_lines: Vec<&str> = rendered.lines().collect();
+    let all_lines: Vec<&str> = rendered.lines().collect();
+    let start = all_lines
+        .iter()
+        .position(|l| !l.trim().is_empty())
+        .unwrap_or(0);
+    let end = all_lines
+        .iter()
+        .rposition(|l| !l.trim().is_empty())
+        .map_or(start, |e| e + 1);
     let content_style = Style::default().fg(theme.latex_block_fg);
     push_special_block_lines(
         lines,
@@ -412,7 +420,7 @@ pub(super) fn push_latex_block_lines(
         item_stack,
         SpecialBlockCtx {
             label: "latex",
-            content_lines: &content_lines,
+            content_lines: &all_lines[start..end],
             show_line_numbers: true,
             center: false,
             make_spans: |line| vec![Span::styled(line.to_string(), content_style)],
