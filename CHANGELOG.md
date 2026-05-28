@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-version -->
 
+## [[1.23.2](https://github.com/RivoLink/leaf/releases/tag/1.23.2)] - 2026-05-28
+
+### Changed
+
+- improve latex rendering ([#164](https://github.com/RivoLink/leaf/pull/164))
+- support json5 syntax highlighting ([#162](https://github.com/RivoLink/leaf/pull/162))
+
 ## [[1.23.1](https://github.com/RivoLink/leaf/releases/tag/1.23.1)] - 2026-05-26
 
 ### Fixed
