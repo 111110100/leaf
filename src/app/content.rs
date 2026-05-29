@@ -28,6 +28,7 @@ impl App {
         lines: Vec<ratatui::text::Line<'static>>,
         toc: Vec<crate::markdown::toc::TocEntry>,
         link_spans: Vec<LinkSpan>,
+        block_starts: Vec<bool>,
     ) {
         use crate::markdown::build_searchable_lines;
         use crate::render::toc_header_line;
@@ -42,6 +43,7 @@ impl App {
         self.toc_header_line = toc_header_line();
         self.link_spans_by_line = super::links::link_spans_to_map(link_spans);
         self.hovered_link = None;
+        self.line_number_rebuild_map(&block_starts);
         self.refresh_static_caches();
     }
 
@@ -90,7 +92,7 @@ impl App {
         self.file_mode = is_code_file;
         let theme = current_syntect_theme(themes);
         let at = app_theme();
-        let (lines, toc, link_spans) = parse_markdown_with_width(
+        let (lines, toc, link_spans, block_starts) = parse_markdown_with_width(
             &src,
             ss,
             theme,
@@ -119,7 +121,7 @@ impl App {
         self.reset_search_state();
         self.invalidate_theme_preview_cache();
         self.store_current_theme_preview_from(&lines, &toc);
-        self.replace_content(lines, toc, link_spans);
+        self.replace_content(lines, toc, link_spans, block_starts);
         true
     }
 
@@ -127,7 +129,7 @@ impl App {
         let theme = current_syntect_theme(themes);
         let at = app_theme();
         let old_total = self.total();
-        let (new_lines, new_toc, link_spans) = parse_markdown_with_width(
+        let (new_lines, new_toc, link_spans, block_starts) = parse_markdown_with_width(
             &self.source,
             ss,
             theme,
@@ -145,7 +147,7 @@ impl App {
 
         self.invalidate_theme_preview_cache();
         self.store_current_theme_preview_from(&new_lines, &new_toc);
-        self.replace_content(new_lines, new_toc, link_spans);
+        self.replace_content(new_lines, new_toc, link_spans, block_starts);
         if !self.search.query.is_empty() && !self.search.mode {
             self.run_search();
         }

@@ -224,7 +224,7 @@ pub(crate) fn parse_markdown(
     theme: &syntect::highlighting::Theme,
     md_theme: &MarkdownTheme,
     file_mode: bool,
-) -> (Vec<Line<'static>>, Vec<TocEntry>, Vec<LinkSpan>) {
+) -> (Vec<Line<'static>>, Vec<TocEntry>, Vec<LinkSpan>, Vec<bool>) {
     parse_markdown_with_width(src, ss, theme, DEFAULT_RENDER_WIDTH, md_theme, file_mode)
 }
 
@@ -235,14 +235,16 @@ pub(crate) fn parse_markdown_with_width(
     render_width: usize,
     theme_colors: &MarkdownTheme,
     file_mode: bool,
-) -> (Vec<Line<'static>>, Vec<TocEntry>, Vec<LinkSpan>) {
+) -> (Vec<Line<'static>>, Vec<TocEntry>, Vec<LinkSpan>, Vec<bool>) {
     let (src, fm_pairs) = frontmatter::extract_frontmatter(src);
     let mut lines: Vec<Line<'static>> = Vec::new();
+    let mut block_starts: Vec<bool> = Vec::new();
 
     if let Some(ref pairs) = fm_pairs {
         let vertical = frontmatter::is_vertical(pairs);
         let tb = TableBuf::from_key_value_pairs(pairs, vertical);
         lines.extend(tb.render(render_width));
+        mark_all_new(&mut block_starts, lines.len());
     }
     let mut toc: Vec<TocEntry> = Vec::new();
 
@@ -262,9 +264,16 @@ pub(crate) fn parse_markdown_with_width(
 
     let normalized = normalize_code_fences(src);
     for ev in Parser::new_ext(&normalized, Options::all()) {
+        block_starts.truncate(lines.len());
+        let before = lines.len();
         if table.is_some()
             && handle_table_event(&mut table, &ev, &mut lines, render_width, &mut link_urls)
         {
+            if lines.len() > before {
+                mark_table_lines(&mut block_starts, lines.len(), &lines);
+            } else {
+                mark_all_new(&mut block_starts, lines.len());
+            }
             continue;
         }
         if handle_inline_style_event(
@@ -278,6 +287,7 @@ pub(crate) fn parse_markdown_with_width(
             continue;
         }
 
+        let mut wraps = false;
         match ev {
             MdEvent::Start(Tag::Table(aligns)) => {
                 start_table(&mut table, &aligns);
@@ -308,6 +318,7 @@ pub(crate) fn parse_markdown_with_width(
                     theme_colors,
                     blockquote_color,
                 );
+                wraps = true;
                 last_block = LastBlock::Paragraph;
             }
             MdEvent::Start(Tag::CodeBlock(kind)) => {
@@ -335,6 +346,7 @@ pub(crate) fn parse_markdown_with_width(
                     );
                     code_buf.clear();
                     code_lang.clear();
+                    wraps = true;
                 } else if code_lang == "mermaid" {
                     push_mermaid_block_lines(
                         &mut lines,
@@ -363,6 +375,7 @@ pub(crate) fn parse_markdown_with_width(
                         },
                         &mut item_stack,
                     );
+                    wraps = true;
                 }
                 last_block = LastBlock::Other;
             }
@@ -392,6 +405,7 @@ pub(crate) fn parse_markdown_with_width(
                     theme_colors,
                     blockquote_color.take(),
                 );
+                wraps = true;
                 last_block = LastBlock::Other;
             }
             MdEvent::Start(Tag::List(start)) => {
@@ -406,6 +420,7 @@ pub(crate) fn parse_markdown_with_width(
                         theme_colors,
                         blockquote_color,
                     );
+                    wraps = true;
                 }
                 start_list(&mut lines, last_block, &mut list_stack, start);
                 last_block = LastBlock::Other;
@@ -428,6 +443,7 @@ pub(crate) fn parse_markdown_with_width(
                     theme_colors,
                     blockquote_color,
                 );
+                wraps = true;
                 last_block = LastBlock::Other;
             }
             MdEvent::Rule => {
@@ -456,6 +472,7 @@ pub(crate) fn parse_markdown_with_width(
                     theme_colors,
                     blockquote_color,
                 );
+                wraps = true;
             }
             MdEvent::SoftBreak | MdEvent::HardBreak => {}
             MdEvent::InlineMath(text) => {
@@ -475,6 +492,7 @@ pub(crate) fn parse_markdown_with_width(
                     &list_stack,
                     &mut item_stack,
                 );
+                wraps = true;
                 last_block = LastBlock::Other;
             }
             MdEvent::TaskListMarker(checked) => {
@@ -484,14 +502,59 @@ pub(crate) fn parse_markdown_with_width(
             }
             _ => {}
         }
+        if wraps && lines.len() > before {
+            mark_wrapped(&mut block_starts, before, lines.len(), &lines);
+        } else {
+            mark_all_new(&mut block_starts, lines.len());
+        }
     }
 
     if !spans.is_empty() {
         lines.push(Line::from(spans));
+        mark_all_new(&mut block_starts, lines.len());
     }
     for _ in 0..5 {
         lines.push(Line::from(""));
     }
+    mark_all_new(&mut block_starts, lines.len());
     let link_spans = build_link_spans(&lines, &link_urls, theme_colors);
-    (lines, normalize_toc(toc), link_spans)
+    (lines, normalize_toc(toc), link_spans, block_starts)
+}
+
+fn is_empty_line(line: &Line) -> bool {
+    line.spans.is_empty() || (line.spans.len() == 1 && line.spans[0].content.is_empty())
+}
+
+fn mark_all_new(flags: &mut Vec<bool>, to: usize) {
+    flags.resize(flags.len().max(to), true);
+}
+
+fn mark_wrapped(flags: &mut Vec<bool>, from: usize, to: usize, lines: &[Line<'_>]) {
+    for (i, line) in lines.iter().enumerate().take(to).skip(flags.len()) {
+        let is_new = i == from
+            || is_empty_line(line)
+            || line.spans.iter().any(|s| {
+                let c = s.content.as_ref();
+                c.starts_with('┌')
+                    || c.starts_with('└')
+                    || c.starts_with('╔')
+                    || c.starts_with('╚')
+                    || (c.starts_with('│')
+                        && c.ends_with('│')
+                        && c.chars().any(|ch| ch.is_ascii_digit()))
+            });
+        flags.push(is_new);
+    }
+}
+
+fn mark_table_lines(flags: &mut Vec<bool>, to: usize, lines: &[Line<'_>]) {
+    let mut prev_border = true;
+    for line in lines.iter().take(to).skip(flags.len()) {
+        let border = line.spans.iter().any(|s| {
+            let c = s.content.as_ref();
+            c.starts_with('┌') || c.starts_with('├') || c.starts_with('╞') || c.starts_with('└')
+        });
+        flags.push(border || is_empty_line(line) || prev_border);
+        prev_border = border;
+    }
 }

@@ -65,6 +65,10 @@ impl App {
         self.toc_visible = !self.toc_visible;
     }
 
+    pub(crate) fn toggle_line_numbers(&mut self) {
+        self.line_number_visible = !self.line_number_visible;
+    }
+
     fn toc_group_for_numkey(&self, key: u8) -> Vec<usize> {
         let hide_single_h1 = should_hide_single_h1(&self.toc);
         let promote_h2_root = should_promote_h2_when_no_h1(&self.toc);

@@ -2,6 +2,7 @@ use crate::{app::App, markdown::display_width, theme::app_theme};
 use ratatui::{
     layout::Rect,
     style::{Color, Style},
+    text::Span,
     widgets::{Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState, Wrap},
     Frame,
 };
@@ -48,6 +49,24 @@ pub(super) fn render_content_panel(f: &mut Frame, app: &mut App, area: Rect) {
                     theme.markdown.link_hover,
                 );
             }
+        }
+    }
+
+    if app.is_line_number_visible() {
+        let digit_width = app.line_number_total().max(1).to_string().len();
+        let blank_gutter = format!("{:>w$}│ ", "", w = digit_width);
+        let gutter_style = Style::default().fg(theme.markdown.code_gutter);
+        for (i, line) in visible_lines.iter_mut().enumerate() {
+            let idx = scroll + i;
+            let logical = app.line_number_at(idx);
+            let is_first =
+                logical > 0 && (idx == 0 || app.line_number_at(idx.saturating_sub(1)) != logical);
+            let gutter = if is_first {
+                format!("{:>w$}│ ", logical, w = digit_width)
+            } else {
+                blank_gutter.clone()
+            };
+            line.spans.insert(0, Span::styled(gutter, gutter_style));
         }
     }
 

@@ -286,6 +286,7 @@ pub(super) fn handle_key_event(
             KeyCode::Char('A') => {
                 app.copy_path_to_clipboard_absolute();
             }
+            KeyCode::Char('l') | KeyCode::Char('L') => app.toggle_line_numbers(),
             KeyCode::Char('e') if key.modifiers.contains(KeyModifiers::CONTROL) => {
                 handle_open_in_editor(terminal, app, ss, themes)?;
             }

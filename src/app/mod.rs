@@ -78,6 +78,8 @@ pub(crate) struct App {
     pub(super) scroll: usize,
     pub(super) toc: Vec<TocEntry>,
     toc_visible: bool,
+    line_number_map: Vec<usize>,
+    line_number_visible: bool,
     pub(super) search: SearchState,
     pub(super) debug_input: bool,
     pub(super) filename: String,
@@ -185,6 +187,8 @@ impl App {
             scroll: 0,
             toc,
             toc_visible: false,
+            line_number_map: Vec::new(),
+            line_number_visible: false,
             search: SearchState {
                 mode: false,
                 draft: String::new(),
@@ -305,6 +309,38 @@ impl App {
 
     pub(crate) fn is_toc_visible(&self) -> bool {
         self.toc_visible
+    }
+
+    pub(crate) fn is_line_number_visible(&self) -> bool {
+        self.line_number_visible
+    }
+
+    pub(crate) fn line_number_total(&self) -> usize {
+        self.line_number_map.last().copied().unwrap_or(0)
+    }
+
+    pub(crate) fn line_number_at(&self, idx: usize) -> usize {
+        self.line_number_map.get(idx).copied().unwrap_or(0)
+    }
+
+    pub(crate) fn line_number_gutter_width(&self) -> usize {
+        if self.line_number_visible {
+            self.line_number_total().max(1).to_string().len() + 2
+        } else {
+            0
+        }
+    }
+
+    pub(crate) fn line_number_rebuild_map(&mut self, new_line_flags: &[bool]) {
+        let mut map = Vec::with_capacity(new_line_flags.len());
+        let mut logical = 0usize;
+        for is_new in new_line_flags {
+            if *is_new {
+                logical += 1;
+            }
+            map.push(logical);
+        }
+        self.line_number_map = map;
     }
 
     pub(crate) fn has_toc(&self) -> bool {

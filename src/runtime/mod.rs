@@ -303,9 +303,11 @@ fn sync_render_width_for_app(
     } else {
         area_width
     };
+    let gutter = app.line_number_gutter_width();
     let effective_width = content_width
         .saturating_sub(CONTENT_HORIZONTAL_PADDING as usize * 2)
-        .saturating_sub(SCROLLBAR_WIDTH as usize);
+        .saturating_sub(SCROLLBAR_WIDTH as usize)
+        .saturating_sub(gutter);
     let capped_width = effective_width.min(app.max_width().unwrap_or(usize::MAX));
     app.sync_render_width(capped_width, ss, themes)
 }

@@ -87,11 +87,13 @@ pub(super) fn handle_mouse_event(app: &mut App, mouse: MouseEvent) -> bool {
                     .unwrap_or(false);
                 app.last_click = Some((mouse.column, mouse.row, now));
 
+                let gutter = app.line_number_gutter_width() as u16;
                 let link_hit = app.link_at_position(
                     mouse.column,
                     mouse.row,
                     CONTENT_HORIZONTAL_PADDING,
                     SCROLLBAR_WIDTH,
+                    gutter,
                 );
                 if app.debug_input_enabled() {
                     super::debug_log(
@@ -166,11 +168,13 @@ pub(super) fn handle_mouse_event(app: &mut App, mouse: MouseEvent) -> bool {
                 let scrollbar_changed = is_on_scrollbar(area, prev_col, prev_row)
                     || is_on_scrollbar(area, mouse.column, mouse.row);
 
+                let gutter = app.line_number_gutter_width() as u16;
                 let new_hover = app.find_hovered_link(
                     mouse.column,
                     mouse.row,
                     CONTENT_HORIZONTAL_PADDING,
                     SCROLLBAR_WIDTH,
+                    gutter,
                 );
                 let hover_changed = app.hovered_link != new_hover;
                 if hover_changed {
