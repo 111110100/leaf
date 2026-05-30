@@ -22,7 +22,7 @@ fn make_app_with_toc(total_lines: usize, viewport_height: u16, toc: Vec<TocEntry
         .map(|_| "line")
         .collect::<Vec<_>>()
         .join("\n");
-    let (lines, _, _) = parse_markdown(&md, &ss, &theme, &test_md_theme(), false);
+    let (lines, _, _, _) = parse_markdown(&md, &ss, &theme, &test_md_theme(), false);
     let mut app = App::new(lines, toc, "test".to_string(), false, false, None, None);
     app.content_area = Rect::new(0, 0, 80, viewport_height);
     app
@@ -71,7 +71,7 @@ fn active_toc_single_header() {
 #[test]
 fn toc_only_includes_first_two_heading_levels() {
     let (ss, theme) = test_assets();
-    let (_, toc, _) = parse_markdown(
+    let (_, toc, _, _) = parse_markdown(
         "# One\n## Two\n### Three\n#### Four\n",
         &ss,
         &theme,
@@ -89,7 +89,7 @@ fn toc_only_includes_first_two_heading_levels() {
 fn frontmatter_is_ignored_in_toc() {
     let (ss, theme) = test_assets();
     let src = "---\ntitle: Demo\nowner: me\n---\n# Visible\nBody\n";
-    let (_, toc, _) = parse_markdown(src, &ss, &theme, &test_md_theme(), false);
+    let (_, toc, _, _) = parse_markdown(src, &ss, &theme, &test_md_theme(), false);
 
     assert_eq!(toc.len(), 1);
     assert_eq!(toc[0].title, "Visible");

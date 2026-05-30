@@ -114,13 +114,13 @@ impl App {
             .and_then(|entry| entry.as_ref())
             .cloned();
         if let Some(entry) = cached {
-            self.replace_content(entry.lines, entry.toc, Vec::new());
+            self.replace_content(entry.lines, entry.toc, Vec::new(), Vec::new());
             return;
         }
 
         let theme = current_syntect_theme(themes);
         let at = app_theme();
-        let (new_lines, new_toc, link_spans) = parse_markdown_with_width(
+        let (new_lines, new_toc, link_spans, block_starts) = parse_markdown_with_width(
             &self.source,
             ss,
             theme,
@@ -129,18 +129,18 @@ impl App {
             self.file_mode,
         );
         self.store_theme_preview(preset, &new_lines, &new_toc);
-        self.replace_content(new_lines, new_toc, link_spans);
+        self.replace_content(new_lines, new_toc, link_spans, block_starts);
     }
 
     pub(crate) fn restore_theme_picker_preview(&mut self, ss: &SyntaxSet, themes: &ThemeSet) {
         if let Some(original) = self.theme_picker.original.take() {
             set_theme_selection(original);
             if let Some(entry) = self.theme_picker.original_preview.take() {
-                self.replace_content(entry.lines, entry.toc, Vec::new());
+                self.replace_content(entry.lines, entry.toc, Vec::new(), Vec::new());
             } else {
                 let theme = current_syntect_theme(themes);
                 let at = app_theme();
-                let (new_lines, new_toc, link_spans) = parse_markdown_with_width(
+                let (new_lines, new_toc, link_spans, block_starts) = parse_markdown_with_width(
                     &self.source,
                     ss,
                     theme,
@@ -148,7 +148,7 @@ impl App {
                     &at.markdown,
                     self.file_mode,
                 );
-                self.replace_content(new_lines, new_toc, link_spans);
+                self.replace_content(new_lines, new_toc, link_spans, block_starts);
             }
         }
         self.close_theme_picker();

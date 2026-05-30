@@ -295,7 +295,7 @@ fn main() -> Result<()> {
         let format = inline::resolve_format(spec, is_tty);
 
         let at = app_theme();
-        let (mut lines, _, _) =
+        let (mut lines, _, _, _) =
             parse_markdown_with_width(&src, &ss, &theme, width, &at.markdown, file_mode);
 
         while lines.last().is_some_and(|l| {
@@ -311,7 +311,7 @@ fn main() -> Result<()> {
     }
 
     let at = app_theme();
-    let (lines, toc, link_spans) = parse_markdown(&src, &ss, &theme, &at.markdown, file_mode);
+    let (lines, toc, link_spans, _) = parse_markdown(&src, &ss, &theme, &at.markdown, file_mode);
     let mut app = App::new_with_source(
         lines,
         toc,

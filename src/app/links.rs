@@ -21,8 +21,9 @@ impl App {
         row: u16,
         padding: u16,
         sb_width: u16,
+        gutter_width: u16,
     ) -> Option<&LinkSpan> {
-        self.find_hovered_link(col, row, padding, sb_width)
+        self.find_hovered_link(col, row, padding, sb_width, gutter_width)
             .and_then(|(line_idx, span_idx)| {
                 self.link_spans_by_line
                     .get(&line_idx)
@@ -36,13 +37,15 @@ impl App {
         row: u16,
         padding: u16,
         sb_width: u16,
+        gutter_width: u16,
     ) -> Option<(usize, usize)> {
         let area = self.content_area;
-        let inner_x = area.x + padding;
+        let inner_x = area.x + padding + gutter_width;
         let inner_w = area
             .width
             .saturating_sub(padding * 2)
-            .saturating_sub(sb_width);
+            .saturating_sub(sb_width)
+            .saturating_sub(gutter_width);
 
         if col < inner_x || col >= inner_x + inner_w || row < area.y || row >= area.y + area.height
         {

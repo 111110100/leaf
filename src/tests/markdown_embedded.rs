@@ -5,7 +5,7 @@ use crate::*;
 #[test]
 fn inline_latex_renders_with_latex_style() {
     let (ss, theme) = test_assets();
-    let (lines, _, _) = parse_markdown(
+    let (lines, _, _, _) = parse_markdown(
         "The formula $x^2 + y^2$ is here.\n",
         &ss,
         &theme,
@@ -33,7 +33,7 @@ fn inline_latex_renders_with_latex_style() {
 #[test]
 fn display_latex_renders_in_framed_block() {
     let (ss, theme) = test_assets();
-    let (lines, _, _) = parse_markdown("$$E = mc^2$$\n", &ss, &theme, &test_md_theme(), false);
+    let (lines, _, _, _) = parse_markdown("$$E = mc^2$$\n", &ss, &theme, &test_md_theme(), false);
     let rendered = rendered_non_empty_lines(&lines);
 
     assert!(
@@ -53,7 +53,7 @@ fn display_latex_renders_in_framed_block() {
 #[test]
 fn inline_latex_is_searchable() {
     let (ss, theme) = test_assets();
-    let (lines, _, _) = parse_markdown(
+    let (lines, _, _, _) = parse_markdown(
         "Check $\\alpha + \\beta$ here.\n",
         &ss,
         &theme,
@@ -71,7 +71,7 @@ fn inline_latex_is_searchable() {
 #[test]
 fn display_latex_in_blockquote_has_quote_prefix() {
     let (ss, theme) = test_assets();
-    let (lines, _, _) = parse_markdown("> $$F = ma$$\n", &ss, &theme, &test_md_theme(), false);
+    let (lines, _, _, _) = parse_markdown("> $$F = ma$$\n", &ss, &theme, &test_md_theme(), false);
     let rendered = rendered_non_empty_lines(&lines);
 
     let header = rendered
@@ -87,7 +87,7 @@ fn display_latex_in_blockquote_has_quote_prefix() {
 #[test]
 fn mermaid_block_renders_in_framed_block() {
     let (ss, theme) = test_assets();
-    let (lines, _, _) = parse_markdown(
+    let (lines, _, _, _) = parse_markdown(
         "```mermaid\ngraph TD\n  A --> B\n```\n",
         &ss,
         &theme,
@@ -117,7 +117,7 @@ fn mermaid_block_renders_in_framed_block() {
 #[test]
 fn mermaid_block_in_blockquote_has_quote_prefix() {
     let (ss, theme) = test_assets();
-    let (lines, _, _) = parse_markdown(
+    let (lines, _, _, _) = parse_markdown(
         "> ```mermaid\n> graph LR\n>   X --> Y\n> ```\n",
         &ss,
         &theme,
@@ -139,7 +139,7 @@ fn mermaid_block_in_blockquote_has_quote_prefix() {
 #[test]
 fn mermaid_content_is_searchable() {
     let (ss, theme) = test_assets();
-    let (lines, _, _) = parse_markdown(
+    let (lines, _, _, _) = parse_markdown(
         "```mermaid\nsequenceDiagram\n  A->>B: Hello\n```\n",
         &ss,
         &theme,
@@ -161,7 +161,7 @@ fn mermaid_content_is_searchable() {
 #[test]
 fn mermaid_rendered_block_has_no_gutter() {
     let (ss, theme) = test_assets();
-    let (lines, _, _) = parse_markdown(
+    let (lines, _, _, _) = parse_markdown(
         "```mermaid\ngraph TD\n  A --> B\n  B --> C\n```\n",
         &ss,
         &theme,
@@ -184,7 +184,7 @@ fn mermaid_rendered_block_has_no_gutter() {
 fn mermaid_fallback_has_numbered_gutter() {
     let (ss, theme) = test_assets();
     let src = "```mermaid\ngantt\n  title Schedule\n  section Dev\n```\n";
-    let (lines, _, _) = parse_markdown(src, &ss, &theme, &test_md_theme(), false);
+    let (lines, _, _, _) = parse_markdown(src, &ss, &theme, &test_md_theme(), false);
     let rendered = rendered_non_empty_lines(&lines);
 
     assert!(
@@ -197,7 +197,7 @@ fn mermaid_fallback_has_numbered_gutter() {
 fn mermaid_pie_renders_bar_chart() {
     let (ss, theme) = test_assets();
     let src = "```mermaid\npie title Languages\n  \"Rust\" : 65\n  \"Go\" : 35\n```\n";
-    let (lines, _, _) = parse_markdown(src, &ss, &theme, &test_md_theme(), false);
+    let (lines, _, _, _) = parse_markdown(src, &ss, &theme, &test_md_theme(), false);
     let rendered = rendered_non_empty_lines(&lines);
 
     assert!(
@@ -226,7 +226,7 @@ fn mermaid_pie_renders_bar_chart() {
 fn mermaid_unsupported_type_falls_back_to_colored_source() {
     let (ss, theme) = test_assets();
     let src = "```mermaid\ngantt\n  title Schedule\n  section Phase 1\n```\n";
-    let (lines, _, _) = parse_markdown(src, &ss, &theme, &test_md_theme(), false);
+    let (lines, _, _, _) = parse_markdown(src, &ss, &theme, &test_md_theme(), false);
     let rendered = rendered_non_empty_lines(&lines);
 
     assert!(
@@ -242,7 +242,8 @@ fn mermaid_unsupported_type_falls_back_to_colored_source() {
 #[test]
 fn mermaid_empty_block_renders_without_crash() {
     let (ss, theme) = test_assets();
-    let (lines, _, _) = parse_markdown("```mermaid\n```\n", &ss, &theme, &test_md_theme(), false);
+    let (lines, _, _, _) =
+        parse_markdown("```mermaid\n```\n", &ss, &theme, &test_md_theme(), false);
     let rendered = rendered_non_empty_lines(&lines);
 
     assert!(
