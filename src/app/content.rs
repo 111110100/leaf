@@ -119,6 +119,7 @@ impl App {
         self.theme_picker.open = false;
         self.search.mode = false;
         self.reset_search_state();
+        self.clear_active_goto_line();
         self.invalidate_theme_preview_cache();
         self.store_current_theme_preview_from(&lines, &toc);
         self.replace_content(lines, toc, link_spans, block_starts);
@@ -148,6 +149,8 @@ impl App {
         self.invalidate_theme_preview_cache();
         self.store_current_theme_preview_from(&new_lines, &new_toc);
         self.replace_content(new_lines, new_toc, link_spans, block_starts);
+        self.goto_line.target = None;
+        self.goto_line.error = false;
         if !self.search.query.is_empty() && !self.search.mode {
             self.run_search();
         }

@@ -232,8 +232,10 @@ See [`gruvbox.toml`](gruvbox.toml) for a complete example with all available col
 | `Shift+Sel` | Select text |
 | `Shift+T` | Open theme picker |
 | `Shift+E` | Open editor picker |
+| `Shift+L` | Toggle line numbers |
 | `Shift+P` | Open file browser |
 | `Ctrl+E` | Open in editor |
+| `Ctrl+L` | Go to line |
 | `Ctrl+P` | Open fuzzy picker |
 | `Ctrl+F` / `/` | Find |
 | `Ctrl+Click` | Open link |

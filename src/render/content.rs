@@ -54,19 +54,32 @@ pub(super) fn render_content_panel(f: &mut Frame, app: &mut App, area: Rect) {
 
     if app.is_line_number_visible() {
         let digit_width = app.line_number_total().max(1).to_string().len();
-        let blank_gutter = format!("{:>w$}│ ", "", w = digit_width);
         let gutter_style = Style::default().fg(theme.markdown.code_gutter);
+        let goto_target = app.goto_line_target();
+        let highlight_bg = theme.markdown.search_highlight_bg;
         for (i, line) in visible_lines.iter_mut().enumerate() {
             let idx = scroll + i;
             let logical = app.line_number_at(idx);
             let is_first =
                 logical > 0 && (idx == 0 || app.line_number_at(idx.saturating_sub(1)) != logical);
-            let gutter = if is_first {
-                format!("{:>w$}│ ", logical, w = digit_width)
+            let is_goto_target = goto_target == Some(idx);
+            let num_part = if is_first {
+                format!("{:>w$}", logical, w = digit_width)
             } else {
-                blank_gutter.clone()
+                format!("{:>w$}", "", w = digit_width)
             };
-            line.spans.insert(0, Span::styled(gutter, gutter_style));
+            if is_goto_target {
+                let hl = gutter_style.bg(highlight_bg);
+                line.spans.insert(0, Span::styled("│ ", hl));
+                line.spans
+                    .insert(0, Span::styled(num_part, hl.fg(Color::White)));
+                for span in &mut line.spans[2..] {
+                    span.style = span.style.bg(highlight_bg);
+                }
+            } else {
+                let gutter = format!("{num_part}│ ");
+                line.spans.insert(0, Span::styled(gutter, gutter_style));
+            }
         }
     }
 
