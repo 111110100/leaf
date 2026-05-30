@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-version -->
 
+## [[1.24.0](https://github.com/RivoLink/leaf/releases/tag/1.24.0)] - 2026-05-30
+
+### Added
+
+- goto line with ctrl+l ([#167](https://github.com/RivoLink/leaf/pull/167))
+- line number with toggle display ([#166](https://github.com/RivoLink/leaf/pull/166))
+
 ## [[1.23.2](https://github.com/RivoLink/leaf/releases/tag/1.23.2)] - 2026-05-28
 
 ### Changed
