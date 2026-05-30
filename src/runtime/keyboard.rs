@@ -206,6 +206,17 @@ pub(super) fn handle_key_event(
             }
             _ => state_changed = false,
         }
+    } else if app.is_goto_line_mode() {
+        match key.code {
+            KeyCode::Esc => app.clear_active_goto_line(),
+            KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+                app.clear_active_goto_line();
+            }
+            KeyCode::Enter => app.confirm_goto_line(),
+            KeyCode::Backspace => app.pop_goto_draft(),
+            KeyCode::Char(c) => app.push_goto_draft(c),
+            _ => state_changed = false,
+        }
     } else if app.is_search_mode() {
         match key.code {
             KeyCode::Esc => app.cancel_search(),
@@ -219,6 +230,7 @@ pub(super) fn handle_key_event(
         }
     } else {
         match key.code {
+            KeyCode::Esc if app.has_active_goto_line() => app.clear_active_goto_line(),
             KeyCode::Esc if app.has_active_search() => app.clear_active_search(),
             KeyCode::Enter if app.has_active_search() => app.next_match(),
             KeyCode::Char('q') if key.modifiers.contains(KeyModifiers::CONTROL) => {
@@ -228,6 +240,8 @@ pub(super) fn handle_key_event(
             KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => {
                 if app.has_active_search() {
                     app.clear_active_search();
+                } else if app.has_active_goto_line() {
+                    app.clear_active_goto_line();
                 } else {
                     return Ok(HandleResult::Break);
                 }
@@ -275,9 +289,13 @@ pub(super) fn handle_key_event(
                 }
             }
             KeyCode::Char('f') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+                app.clear_active_goto_line();
                 app.begin_search()
             }
-            KeyCode::Char('/') => app.begin_search(),
+            KeyCode::Char('/') => {
+                app.clear_active_goto_line();
+                app.begin_search()
+            }
             KeyCode::Char('n') => app.next_match(),
             KeyCode::Char('N') => app.prev_match(),
             KeyCode::Char('R') => {
@@ -285,6 +303,9 @@ pub(super) fn handle_key_event(
             }
             KeyCode::Char('A') => {
                 app.copy_path_to_clipboard_absolute();
+            }
+            KeyCode::Char('l') if key.modifiers.contains(KeyModifiers::CONTROL) => {
+                app.begin_goto_line()
             }
             KeyCode::Char('l') | KeyCode::Char('L') => app.toggle_line_numbers(),
             KeyCode::Char('e') if key.modifiers.contains(KeyModifiers::CONTROL) => {

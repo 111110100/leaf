@@ -17,6 +17,9 @@ use std::{
 mod search;
 pub(crate) use search::SearchState;
 
+mod goto_line;
+pub(crate) use goto_line::GotoLineState;
+
 mod file_picker;
 mod fuzzy;
 pub(crate) use file_picker::{FilePickerMode, FilePickerState, PickerIndexTruncation};
@@ -51,6 +54,10 @@ pub(crate) struct StatusCacheKey {
     search_query_len: usize,
     search_match_count: usize,
     search_idx: usize,
+    goto_line_mode: bool,
+    goto_line_draft_hash: u64,
+    goto_line_target: Option<usize>,
+    goto_line_error: bool,
     watch: bool,
     flash_active: bool,
     editor_flash_active: bool,
@@ -81,6 +88,7 @@ pub(crate) struct App {
     line_number_map: Vec<usize>,
     line_number_visible: bool,
     pub(super) search: SearchState,
+    pub(super) goto_line: GotoLineState,
     pub(super) debug_input: bool,
     pub(super) filename: String,
     pub(super) source: String,
@@ -197,6 +205,13 @@ impl App {
                 idx: 0,
                 draft_hash: 0,
                 query_hash: 0,
+            },
+            goto_line: GotoLineState {
+                mode: false,
+                draft: String::new(),
+                target: None,
+                error: false,
+                draft_hash: 0,
             },
             debug_input,
             filename,
@@ -488,6 +503,10 @@ impl App {
             search_query_len: self.search.query.len(),
             search_match_count: self.search.matches.len(),
             search_idx: self.search.idx,
+            goto_line_mode: self.goto_line.mode,
+            goto_line_draft_hash: self.goto_line.draft_hash,
+            goto_line_target: self.goto_line.target,
+            goto_line_error: self.goto_line.error,
             watch: self.watch,
             flash_active: self
                 .reload_flash
