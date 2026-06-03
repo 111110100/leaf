@@ -9,54 +9,56 @@
   - initializes terminal + syntax/theme assets
 
 - `src/app/`
-  - `mod.rs` — central runtime state: document content, TOC, search, watch, editor config, mode detection (`has_content()`)
-  - `content.rs` — document loading, reload, reparse, modification detection
-  - `navigation.rs` — scroll, TOC jump, numkey cycle, reverse mode
-  - `flash.rs` — flash notification state (editor, watch, config, link, reload)
-  - `popups.rs` — help, path popup, editor picker state and methods
-  - `links.rs` — link detection, hover tracking, link span mapping
-  - `file_picker.rs` — fuzzy and browser picker state, queue/pending lifecycle
-  - `io_picker.rs` — filesystem scanning, async loading via thread + mpsc channel, fuzzy matching
-  - `fuzzy.rs` — fuzzy matching algorithm and directory sort helpers
-  - `search.rs` — search state and match tracking
-  - `theme_picker.rs` — theme picker state with preview cache
+  - `mod.rs`  :  central runtime state: document content, TOC, search, watch, editor config, mode detection (`has_content()`)
+  - `content.rs`  :  document loading, reload, reparse, modification detection
+  - `navigation.rs`  :  scroll, TOC jump, numkey cycle, reverse mode
+  - `goto_line.rs`  :  go-to-line mode (`Ctrl+L`): draft input, target validation, error state, contextual scroll offset
+  - `flash.rs`  :  flash notification state (editor, watch, config, link, reload)
+  - `popups.rs`  :  help, path popup, editor picker state and methods
+  - `links.rs`  :  link detection, hover tracking, link span mapping
+  - `file_picker.rs`  :  fuzzy and browser picker state, queue/pending lifecycle
+  - `io_picker.rs`  :  filesystem scanning, async loading via thread + mpsc channel, fuzzy matching
+  - `fuzzy.rs`  :  fuzzy matching algorithm and directory sort helpers
+  - `search.rs`  :  search state and match tracking
+  - `theme_picker.rs`  :  theme picker state with preview cache
 
 - `src/markdown/`
-  - `mod.rs` — core Markdown parsing loop and render preparation
-  - `blocks.rs` — block-level rendering (headings, code blocks, blockquotes, rules, LaTeX/Mermaid blocks)
-  - `spans.rs` — inline style handling (bold, italic, code, LaTeX, links)
-  - `lists.rs` — list rendering (ordered, unordered, nested)
-  - `highlight.rs` — search match highlighting across spans
-  - `syntax.rs` — syntect code highlighting and language resolution
-  - `fences.rs` — code fence normalization (nested fences, tilde fences)
-  - `links.rs` — link span detection and construction
-  - `tables.rs` — table construction, event handling, and rendering
-  - `table_layout.rs` — table cell sizing, wrapping, and alignment algorithms
-  - `latex.rs` — LaTeX-to-Unicode conversion: `unicodeit` + postprocessing for `\frac`, `\sqrt`, `^{}`, `_{}`
-  - `mermaid.rs` — Mermaid diagram ASCII rendering
-  - `frontmatter.rs` — YAML frontmatter extraction and key-value parsing
-  - `toc.rs` — TOC extraction and normalization
-  - `width.rs` — width-aware helpers
-  - `wrapping.rs` — line wrapping for constrained widths
+  - `mod.rs`  :  core Markdown parsing loop and render preparation
+  - `blocks.rs`  :  block-level rendering (headings, code blocks, blockquotes, rules, LaTeX/Mermaid blocks)
+  - `spans.rs`  :  inline style handling (bold, italic, code, LaTeX, links)
+  - `markers.rs`  :  custom inline markers (`==mark==`): open/close delimiters, themed styles, padding
+  - `lists.rs`  :  list rendering (ordered, unordered, nested)
+  - `highlight.rs`  :  search match highlighting across spans
+  - `syntax.rs`  :  syntect code highlighting and language resolution
+  - `fences.rs`  :  code fence normalization (nested fences, tilde fences)
+  - `links.rs`  :  link span detection and construction
+  - `tables.rs`  :  table construction, event handling, and rendering
+  - `table_layout.rs`  :  table cell sizing, wrapping, and alignment algorithms
+  - `latex.rs`  :  LaTeX-to-Unicode conversion: `unicodeit` + postprocessing for `\frac`, `\sqrt`, `^{}`, `_{}`
+  - `mermaid.rs`  :  Mermaid diagram ASCII rendering
+  - `frontmatter.rs`  :  YAML frontmatter extraction and key-value parsing
+  - `toc.rs`  :  TOC extraction and normalization
+  - `width.rs`  :  width-aware helpers
+  - `wrapping.rs`  :  line wrapping for constrained widths
 
 - `src/render/`
-  - `mod.rs` — TUI layout orchestration with `ratatui`
-  - `content.rs` — main content panel rendering
-  - `popup.rs` — popup rendering for help, theme picker, path display
-  - `popup_picker.rs` — popup rendering for file picker, editor picker, loading/failed states
-  - `status.rs` — status bar construction (brand, filename, search, watch, shortcuts, percentage)
-  - `toc.rs` — TOC sidebar rendering
+  - `mod.rs`  :  TUI layout orchestration with `ratatui`
+  - `content.rs`  :  main content panel rendering
+  - `popup.rs`  :  popup rendering for help, theme picker, path display
+  - `popup_picker.rs`  :  popup rendering for file picker, editor picker, loading/failed states
+  - `status.rs`  :  status bar construction (brand, filename, search, watch, shortcuts, percentage)
+  - `toc.rs`  :  TOC sidebar rendering
 
 - `src/runtime/`
-  - `mod.rs` — event loop, polling, timers, resize synchronization
-  - `keyboard.rs` — keyboard handling with mode-aware branching (help → picker_loading → picker_failed → file_picker → theme_picker → editor_picker → search → normal)
-  - `mouse.rs` — mouse handling (scroll, click, double-click, scrollbar drag, link hover)
+  - `mod.rs`  :  event loop, polling, timers, resize synchronization
+  - `keyboard.rs`  :  keyboard handling with mode-aware branching (help → picker_loading → picker_failed → file_picker → theme_picker → editor_picker → path_popup → goto_line → search → normal)
+  - `mouse.rs`  :  mouse handling (scroll, click, double-click, scrollbar drag, link hover)
 
 - `src/theme/`
-  - `mod.rs` — theme types, global state, preset selection API
-  - `presets.rs` — built-in theme definitions (Arctic, Forest, OceanDark, SolarizedDark)
-  - `resolution.rs` — theme resolution, color parsing, custom theme file loading
-  - `serde.rs` — theme deserialization, color visitor, override macros
+  - `mod.rs`  :  theme types, global state, preset selection API
+  - `presets.rs`  :  built-in theme definitions (Arctic, Forest, OceanDark, SolarizedDark)
+  - `resolution.rs`  :  theme resolution, color parsing, custom theme file loading
+  - `serde.rs`  :  theme deserialization, color visitor, override macros
 
 - `src/editor.rs`
   - editor detection, classification (terminal vs GUI), and launch
@@ -64,6 +66,18 @@
 - `src/cli.rs`
   - command-line parsing
   - usage/version text
+
+- `src/config.rs`
+  - `config.toml` loading and creation (`--config`, `--config reset`)
+  - `LeafConfig` defaults (theme, editor, watch, width, extras) with CLI overrides
+
+- `src/completions.rs`
+  - shell completion installation (`--auto-complete`)
+  - shell detection and embedded bash/zsh/fish/PowerShell scripts
+
+- `src/clipboard.rs`
+  - cross-platform URL opening (`open`, `xdg-open`, `cmd start`)
+  - clipboard copy via OSC 52 escape sequence (base64)
 
 - `src/inline.rs`
   - non-interactive stdout rendering (`--inline`)
@@ -78,24 +92,26 @@
   - self-update: asset download, SHA256 verification, and binary replacement
 
 - `src/tests/`
-  - `app.rs` — app state, search, and mode detection tests
-  - `file_picker.rs` — picker opening, browser mode, queued transitions
-  - `file_fuzzy.rs` — fuzzy matching, scoring, filtering, truncation
-  - `markdown_lists.rs` — list rendering regression tests
-  - `markdown_tables.rs` — table rendering regression tests
-  - `markdown_blocks.rs` — headings, TOC, blockquotes, code blocks, rules
-  - `markdown_embedded.rs` — LaTeX and Mermaid rendering tests
-  - `markdown_links.rs` — link detection and search highlight tests
-  - `editor.rs` — editor detection and classification
-  - `render.rs` — table and code block border alignment
-  - `theme.rs` — theme picker preview and restore
-  - `config.rs` — configuration parsing tests
-  - `inline.rs` — inline spec parsing, format resolution, and write_lines tests
-  - `update.rs` — release asset matching and checksum verification
+  - `app.rs`  :  app state, search, and mode detection tests
+  - `file_picker.rs`  :  picker opening, browser mode, queued transitions
+  - `file_fuzzy.rs`  :  fuzzy matching, scoring, filtering, truncation
+  - `markdown_lists.rs`  :  list rendering regression tests
+  - `markdown_tables.rs`  :  table rendering regression tests
+  - `markdown_blocks.rs`  :  headings, TOC, blockquotes, code blocks, rules
+  - `markdown_embedded.rs`  :  LaTeX and Mermaid rendering tests
+  - `markdown_links.rs`  :  link detection and search highlight tests
+  - `toc.rs`  :  TOC extraction, normalization, active section tracking, and display level tests
+  - `editor.rs`  :  editor detection and classification
+  - `render.rs`  :  table and code block border alignment
+  - `theme.rs`  :  theme picker preview and restore
+  - `config.rs`  :  configuration parsing tests
+  - `completions.rs`  :  auto-complete argument parsing and completion script installation tests
+  - `inline.rs`  :  inline spec parsing, format resolution, and write_lines tests
+  - `update.rs`  :  release asset matching and checksum verification
 
 ## Execution flow
 
-1. `main.rs` parses CLI options.
+1. `main.rs` parses CLI options, loads `config.toml`, and handles standalone commands (`--auto-complete`, `--config`, `--update`) before any document is opened.
 2. A document is loaded from:
    - a file argument, or
    - `stdin`, or
