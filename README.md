@@ -121,8 +121,8 @@ leaf --inline ansi:60 README.md
 cat README.md | leaf --inline
 
 # Use as a fzf preview
-find . -name '*.md' | fzf --preview 'leaf --inline ansi {}'
-find . -name '*.md' | fzf --preview 'leaf --inline ansi:$FZF_PREVIEW_COLUMNS {}'
+fzf --preview 'leaf --inline ansi {}'
+fzf --preview 'leaf --inline ansi:$FZF_PREVIEW_COLUMNS {}'
 ```
 
 ## Shell Completions
@@ -220,45 +220,40 @@ See [`gruvbox.toml`](gruvbox.toml) for a complete example with all available col
 
 ## Keybindings
 
-| Key | Action |
-|---|---|
-| `j` / `↓` | Scroll down |
-| `k` / `↑` | Scroll up |
-| `d` / PgDn | Page down (20 lines) |
-| `u` / PgUp | Page up (20 lines) |
-| `g` / Home | Top |
-| `G` / End | Bottom |
-| `t` | Toggle TOC sidebar |
-| `Shift+Sel` | Select text |
-| `Shift+T` | Open theme picker |
-| `Shift+E` | Open editor picker |
-| `Shift+L` | Toggle line numbers |
-| `Shift+P` | Open file browser |
-| `Ctrl+E` | Open in editor |
-| `Ctrl+L` | Go to line |
-| `Ctrl+P` | Open fuzzy picker |
-| `Ctrl+F` / `/` | Find |
-| `Ctrl+Click` | Open link |
-| `Dbl-Click` | Copy link |
-| `n` / `N` | Next / prev match |
-| `?` | Show help popup |
-| `r` | Force reload (watch mode) |
-| `q` | Quit |
+| Key | Action | Key | Action |
+|---|---|---|---|
+| `j` / `↓` | Scroll down | `?` | Show help popup |
+| `k` / `↑` | Scroll up | `t` | Toggle TOC sidebar |
+| `d` / PgDn | Page down (20 lines) | `Shift+L` | Toggle line numbers |
+| `u` / PgUp | Page up (20 lines) | `Shift+T` | Open theme picker |
+| `g` / Home | Top | `Shift+E` | Open editor picker |
+| `G` / End | Bottom | `Shift+P` | Open file browser |
+| `Ctrl+L` | Go to line | `Ctrl+P` | Open fuzzy picker |
+| `Ctrl+F` / `/` | Find | `Ctrl+E` | Open in editor |
+| `n` / `N` | Next / prev match | `Ctrl+Click` | Open link |
+| `r` | Force reload (watch mode) | `Dbl-Click` | Copy link |
+| `q` | Quit | `Shift+Sel` | Select text |
 
 ## Features
 
-- **Live preview** — Watch mode with automatic reload and visual feedback.
-- **File picker** — Fuzzy Markdown picker, directory browser, and watch after selection.
-- **Editor integration** — Open the current file in your preferred editor.
-- **Frontmatter support** — YAML frontmatter rendered as a table (horizontal or vertical based on key count).
-- **Rich Markdown rendering** — Tables, lists, blockquotes, rules, bold, italic, and strikethrough.
-- **Extra file types** — Open any file; code files get syntax highlighting, text files render as Markdown.
-- **Syntax highlighting** — Common aliases like `py`, `cpp`, `json`, `toml`, `ps1`, `dockerfile`.
-- **LaTeX support** — Inline, block, and `latex` / `tex` code blocks rendered as formulas.
-- **Navigation** — TOC sidebar, active section tracking, heading jumps, and search.
-- **Terminal UX** — Theme picker, help popup, file path popup, mouse and keyboard support.
-- **Shell completions** — Tab completion for bash, zsh, fish, and PowerShell via `leaf --auto-complete`.
-- **CLI friendly** — stdin support and `leaf --update` with SHA256 verification.
+- **Live preview**  :  *Watch mode with automatic reload and visual feedback*.
+- **File picker**  :  *Fuzzy Markdown picker, directory browser, and watch after selection*.
+- **Editor integration**  :  *Open the current file in your preferred editor*.
+- **Frontmatter support**  :  *YAML frontmatter rendered as a table (horizontal or vertical based on key count)*.
+- **Rich Markdown rendering**  :  *Tables, lists, blockquotes, rules, bold, italic, and strikethrough*.
+- **GitHub extras**  :  *Alert callouts, task list checkboxes, and `==mark==` text highlighting*.
+- **Extra file types**  :  *Open any file; code files get syntax highlighting, text files render as Markdown*.
+- **Syntax highlighting**  :  *Common aliases like `py`, `cpp`, `json`, `toml`, `ps1`, `dockerfile`*.
+- **Line numbers**  :  *Toggle display with `Shift+L`, jump to a line with `Ctrl+L`*.
+- **LaTeX support**  :  *Inline, block, and `latex` / `tex` code blocks rendered as formulas*.
+- **Mermaid diagrams**  :  *`mermaid` code blocks rendered as ASCII diagrams*.
+- **Clickable links**  :  *`Ctrl+Click` to open, double-click to copy, hover feedback*.
+- **Navigation**  :  *TOC sidebar, active section tracking, heading jumps, and search*.
+- **Terminal UX**  :  *Theme picker, help popup, file path popup, mouse and keyboard support*.
+- **Custom themes**  :  *TOML theme files inheriting from built-in presets with color overrides*.
+- **Inline mode**  :  *Render to stdout with `--inline` for pipes and fzf previews*.
+- **Shell completions**  :  *Tab completion for bash, zsh, fish, and PowerShell via `leaf --auto-complete`*.
+- **CLI friendly**  :  *stdin support and `leaf --update` with SHA256 verification*.
 
 ## Typical AI Workflow
 
@@ -294,6 +289,14 @@ Close any terminal session still running `leaf`, then rerun the PowerShell insta
 irm https://raw.githubusercontent.com/RivoLink/leaf/main/scripts/install.ps1 | iex
 ```
 
+### Windows: auto-complete execution policy error
+
+If PowerShell reports that running scripts is disabled on this system after `leaf --auto-complete`, allow local scripts and restart PowerShell:
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
 ## Uninstall
 
 **macOS / Linux / Android / Termux:**
@@ -318,7 +321,7 @@ npm uninstall -g @rivolink/leaf
 
 Thanks to all contributors.
 
-![Contributors](https://stg.contrib.rocks/image?repo=RivoLink/leaf&t=717807600)
+![Contributors](https://contrib.rocks/image?repo=RivoLink/leaf&t=717807600)
 
 ## Support
 
