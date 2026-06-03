@@ -245,3 +245,40 @@ fn resolve_syntax_supports_common_language_aliases() {
         resolve_syntax("ps1", &ss).name
     );
 }
+
+#[test]
+fn resolve_syntax_php_uses_php_source() {
+    let ss = SyntaxSet::load_defaults_newlines();
+
+    for tag in &["php", "PHP", "php3", "php4", "php5", "php7", "phtml"] {
+        assert_eq!(
+            resolve_syntax(tag, &ss).name,
+            "PHP Source",
+            "{tag} should resolve to PHP Source"
+        );
+    }
+}
+
+#[test]
+fn php_code_block_without_open_tag_is_highlighted() {
+    let (ss, theme) = test_assets();
+    let md = "```php\nforeach ($map as $item) {\n    $scores[] = $item ?? 0;\n}\n```\n";
+    let (lines, _, _, _) = parse_markdown(md, &ss, &theme, &test_md_theme(), false);
+
+    let span_fg = |needle: &str| {
+        lines
+            .iter()
+            .flat_map(|l| l.spans.iter())
+            .find(|s| s.content.contains(needle))
+            .and_then(|s| s.style.fg)
+    };
+    let keyword_fg = span_fg("foreach");
+    let variable_fg = span_fg("scores");
+
+    assert!(keyword_fg.is_some(), "should find 'foreach' span");
+    assert!(variable_fg.is_some(), "should find 'scores' span");
+    assert_ne!(
+        keyword_fg, variable_fg,
+        "php block without <?php should highlight keywords and variables differently"
+    );
+}
