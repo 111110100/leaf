@@ -54,6 +54,16 @@ pub(crate) fn resolve_syntax<'a>(
         _ => &[],
     };
 
+    // "PHP Source" highlights php even without "<?php".
+    if matches!(
+        normalized.as_str(),
+        "php" | "php3" | "php4" | "php5" | "php7" | "phtml"
+    ) {
+        if let Some(s) = ss.find_syntax_by_name("PHP Source") {
+            return s;
+        }
+    }
+
     ss.find_syntax_by_token(raw)
         .or_else(|| ss.find_syntax_by_extension(raw))
         .or_else(|| ss.find_syntax_by_token(&normalized))
