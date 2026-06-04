@@ -77,7 +77,7 @@ pub(super) fn popup_footer_line(segments: &[&'static str], bg: Color) -> Line<'s
 
 pub(super) fn render_help_popup(f: &mut Frame, _app: &App) {
     let theme = app_theme();
-    let area = centered_rect(54, 24, f.area());
+    let area = centered_rect(55, 24, f.area());
     let section_style = Style::default()
         .fg(theme.ui.toc_primary_active)
         .add_modifier(Modifier::BOLD);
