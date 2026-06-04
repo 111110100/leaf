@@ -48,6 +48,8 @@ use links::build_link_spans;
 use lists::{
     end_item, end_list, flush_list_item_spans, start_item, start_list, ItemState, ListKind,
 };
+#[cfg(test)]
+pub(crate) use lists::{TASK_CHECKED, TASK_CHECKED_ALT, TASK_UNCHECKED};
 use markers::push_custom_marker_spans;
 use spans::{
     handle_inline_style_event, inline_text_style, push_inline_code_span, push_inline_latex_span,
