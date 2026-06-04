@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use crate::theme::MarkdownTheme;
 use ratatui::{
     style::Style,
@@ -8,6 +10,10 @@ use super::blocks::{block_prefix, trim_paragraph_gap_before_block};
 use super::width::display_width;
 use super::wrapping::push_wrapped_prefixed_lines;
 use super::LastBlock;
+
+pub(crate) const TASK_CHECKED: &str = "☑ ";
+pub(crate) const TASK_CHECKED_ALT: &str = "☒ ";
+pub(crate) const TASK_UNCHECKED: &str = "☐ ";
 
 #[derive(Clone, Copy)]
 pub(super) enum ListKind {
@@ -41,16 +47,18 @@ pub(super) fn list_item_prefix(
     let depth = list_stack.len();
     prefix.push(Span::raw("  ".repeat(depth.saturating_sub(1))));
 
-    let marker = match item.checkbox {
-        Some(true) => "☑ ".to_string(),
-        Some(false) => "☐ ".to_string(),
+    let marker: Cow<'static, str> = match item.checkbox {
+        // Avoids U+2611 emoji rendering on Windows.
+        Some(true) if cfg!(target_os = "windows") => TASK_CHECKED_ALT.into(),
+        Some(true) => TASK_CHECKED.into(),
+        Some(false) => TASK_UNCHECKED.into(),
         None => match list_stack.last().copied().unwrap_or(ListKind::Unordered) {
             ListKind::Unordered => match depth {
-                1 => "• ".to_string(),
-                2 => "◦ ".to_string(),
-                _ => "▸ ".to_string(),
+                1 => "• ".into(),
+                2 => "◦ ".into(),
+                _ => "▸ ".into(),
             },
-            ListKind::Ordered(n) => format!("{n}. "),
+            ListKind::Ordered(n) => format!("{n}. ").into(),
         },
     };
     item.continuation_indent = "  ".repeat(depth.saturating_sub(1)).len() + display_width(&marker);

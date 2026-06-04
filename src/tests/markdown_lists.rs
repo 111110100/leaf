@@ -1,5 +1,6 @@
 use super::{rendered_non_empty_lines, test_assets, test_md_theme};
 use crate::markdown::{parse_markdown, parse_markdown_with_width};
+use crate::markdown::{TASK_CHECKED, TASK_CHECKED_ALT, TASK_UNCHECKED};
 use crate::*;
 
 #[test]
@@ -222,6 +223,13 @@ fn wrapped_list_inline_code_keeps_left_padding_in_rendered_line() {
             .any(|span| span.style.bg.is_some() && span.content.starts_with(' ')),
         "expected a background-styled span with left padding"
     );
+}
+
+#[test]
+fn task_markers_have_uniform_width() {
+    assert_eq!(display_width(TASK_UNCHECKED), 2);
+    assert_eq!(display_width(TASK_CHECKED_ALT), 2);
+    assert_eq!(display_width(TASK_CHECKED), 2);
 }
 
 #[test]
