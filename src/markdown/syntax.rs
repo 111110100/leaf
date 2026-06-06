@@ -132,7 +132,7 @@ pub(super) fn highlight_code(
     let total_lines = raw.len();
     let digit_width = total_lines.max(1).to_string().len();
     let max_inner_width = render_width
-        .saturating_sub(4)
+        .saturating_sub(2)
         .max(UnicodeWidthStr::width(label) + 3);
     let inner_width = if full_width {
         max_inner_width

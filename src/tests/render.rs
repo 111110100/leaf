@@ -1,5 +1,6 @@
 use super::{find_symbol, render_buffer, test_assets, test_md_theme};
-use crate::markdown::parse_markdown;
+use crate::app::App;
+use crate::markdown::{parse_markdown, parse_markdown_with_width};
 use crate::wrap_path_lines;
 use ratatui::style::Style;
 
@@ -18,6 +19,26 @@ fn code_block_box_renders_right_border_in_one_column() {
             buffer.cell((right_x, y)).unwrap().symbol(),
             "│",
             "missing code block right border at row {y}"
+        );
+    }
+}
+
+#[test]
+fn file_mode_code_block_fills_full_render_width() {
+    let (ss, theme) = test_assets();
+    let render_width = 40;
+    let src = App::fence_wrap("fn main() {\n    let city = \"東京\";\n}", "rs");
+    let (lines, _, _, _) =
+        parse_markdown_with_width(&src, &ss, &theme, render_width, &test_md_theme(), true);
+    let buffer = render_buffer(&lines);
+
+    assert!(find_symbol(&buffer, "┐").is_some());
+    assert!(find_symbol(&buffer, "┘").is_some());
+    for line in lines.iter().filter(|line| line.width() > 0) {
+        assert_eq!(
+            line.width(),
+            render_width,
+            "code block line should fill the render width"
         );
     }
 }
