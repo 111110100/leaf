@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-version -->
 
+## [[1.24.1](https://github.com/RivoLink/leaf/releases/tag/1.24.1)] - 2026-06-08
+
+### Docs
+
+- update readme and architecture ([#168](https://github.com/RivoLink/leaf/pull/168))
+
+### Fixed
+
+- code-block full width ([#172](https://github.com/RivoLink/leaf/pull/172))
+- help popup width ([#171](https://github.com/RivoLink/leaf/pull/171))
+- tasklist-done on PowerShell ([#170](https://github.com/RivoLink/leaf/pull/170))
+- php code-block highlight ([#169](https://github.com/RivoLink/leaf/pull/169))
+
 ## [[1.24.0](https://github.com/RivoLink/leaf/releases/tag/1.24.0)] - 2026-05-30
 
 ### Added
