@@ -19,7 +19,7 @@ $global:LeafCompleter = {
             return
         }
         { $_ -in '--editor', '-e' } {
-            @('nano', 'vim', 'vi', 'nvim', 'micro', 'helix', 'emacs', 'jed',
+            @('nano', 'vim', 'vi', 'nvim', 'micro', 'hx', 'emacs', 'jed',
               'code', 'codium', 'subl', 'gedit', 'kate', 'mousepad', 'zed',
               'xjed', 'notepad', 'notepad++') |
                 Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {

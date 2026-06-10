@@ -46,7 +46,7 @@ fn classify_terminal_editors() {
     assert_eq!(classify("vim"), EditorKind::Terminal);
     assert_eq!(classify("nvim"), EditorKind::Terminal);
     assert_eq!(classify("micro"), EditorKind::Terminal);
-    assert_eq!(classify("helix"), EditorKind::Terminal);
+    assert_eq!(classify("hx"), EditorKind::Terminal);
     assert_eq!(classify("emacs"), EditorKind::Terminal);
     assert_eq!(classify("jed"), EditorKind::Terminal);
 }
@@ -223,6 +223,6 @@ fn resolve_editor_fallback_is_not_empty() {
 
 #[test]
 fn resolve_editor_config_takes_priority_over_fallback() {
-    let result = resolve_editor(None, Some("helix"));
-    assert_eq!(result, "helix");
+    let result = resolve_editor(None, Some("hx"));
+    assert_eq!(result, "hx");
 }

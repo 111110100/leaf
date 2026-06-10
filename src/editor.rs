@@ -82,7 +82,7 @@ const KNOWN_EDITORS: &[(&str, EditorKind)] = &[
     ("vi", EditorKind::Terminal),
     ("nvim", EditorKind::Terminal),
     ("micro", EditorKind::Terminal),
-    ("helix", EditorKind::Terminal),
+    ("hx", EditorKind::Terminal),
     ("emacs", EditorKind::Terminal),
     ("jed", EditorKind::Terminal),
     ("code", EditorKind::Gui),

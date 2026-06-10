@@ -9,7 +9,7 @@ _leaf() {
             return
             ;;
         --editor|-e)
-            COMPREPLY=($(compgen -W "nano vim vi nvim micro helix emacs jed code codium subl gedit kate mousepad zed xjed notepad notepad++" -- "$cur"))
+            COMPREPLY=($(compgen -W "nano vim vi nvim micro hx emacs jed code codium subl gedit kate mousepad zed xjed notepad notepad++" -- "$cur"))
             return
             ;;
         --inline)
