@@ -169,3 +169,44 @@ fn table_apostrophe_no_split() {
         "no spaces around smart apostrophe — got: {cell_line}"
     );
 }
+
+#[test]
+fn table_long_inline_code_wraps_without_clipping() {
+    let (ss, theme) = test_assets();
+    let code = "verylonginlinecodethatcannotfitinasinglenarrowcolumn";
+    let md = format!("| Description |\n|---|\n| `{code}` |\n");
+    let width = 24;
+    let (lines, _, _, _) =
+        parse_markdown_with_width(&md, &ss, &theme, width, &test_md_theme(), false);
+    let rendered = rendered_non_empty_lines(&lines);
+    let theme_colors = &app_theme().markdown;
+
+    assert!(
+        rendered.iter().all(|line| display_width(line) <= width),
+        "table lines should not exceed render width"
+    );
+
+    let code_lines = lines
+        .iter()
+        .filter(|line| {
+            line.spans
+                .iter()
+                .any(|span| span.style.bg == Some(theme_colors.inline_code_bg))
+        })
+        .count();
+    assert!(
+        code_lines >= 2,
+        "long inline code should wrap across multiple lines, got {code_lines}"
+    );
+
+    let reassembled: String = lines
+        .iter()
+        .flat_map(|line| line.spans.iter())
+        .filter(|span| span.style.bg == Some(theme_colors.inline_code_bg))
+        .map(|span| span.content.trim())
+        .collect();
+    assert_eq!(
+        reassembled, code,
+        "wrapped code must preserve all characters"
+    );
+}

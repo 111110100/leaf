@@ -7,7 +7,8 @@ use ratatui::{
 
 use super::latex;
 use super::table_layout::{
-    align_cell, fit_table_widths, fragments_display_width, min_table_cell_width, wrap_table_cell,
+    align_cell, cap_table_widths, fit_table_widths, fragments_display_width, min_table_cell_width,
+    wrap_table_cell,
 };
 use super::width::display_width;
 
@@ -348,6 +349,7 @@ impl TableBuf {
             }
         }
 
+        cap_table_widths(&mut col_widths, render_width);
         fit_table_widths(&mut col_widths, &min_widths, render_width);
 
         if self.fill_width {
