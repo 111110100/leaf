@@ -23,11 +23,16 @@ pub(super) fn min_table_cell_width(frags: &[CellFragment]) -> usize {
                 .unwrap_or(0)
                 .min(12)
         } else {
-            frag.display_width()
+            display_width(&frag.rendered_text()).min(12) + 2
         };
         max_width = max_width.max(w);
     }
     max_width
+}
+
+fn table_available_width(col_count: usize, render_width: usize) -> usize {
+    let border_width = 3 * col_count + 1;
+    render_width.saturating_sub(border_width).max(col_count)
 }
 
 pub(super) fn fit_table_widths(
@@ -40,8 +45,7 @@ pub(super) fn fit_table_widths(
     }
 
     let col_count = col_widths.len();
-    let border_width = 3 * col_count + 1;
-    let available = render_width.saturating_sub(border_width).max(col_count);
+    let available = table_available_width(col_count, render_width);
     let min_total: usize = min_widths.iter().sum();
 
     if min_total >= available {
@@ -71,6 +75,48 @@ pub(super) fn fit_table_widths(
             break;
         };
         col_widths[idx] -= 1;
+    }
+}
+
+pub(super) fn cap_table_widths(col_widths: &mut [usize], render_width: usize) {
+    let col_count = col_widths.len();
+    if col_count == 0 {
+        return;
+    }
+    let available = table_available_width(col_count, render_width);
+    let max_col = (available / col_count).max(1);
+
+    let need: Vec<usize> = col_widths.to_vec();
+    for w in col_widths.iter_mut() {
+        *w = (*w).min(max_col);
+    }
+
+    let surplus = available.saturating_sub(col_widths.iter().sum());
+    let demand_count = need
+        .iter()
+        .zip(col_widths.iter())
+        .filter(|(n, w)| n > w)
+        .count();
+    if surplus == 0 || demand_count == 0 {
+        return;
+    }
+    let share = surplus / demand_count;
+    let rem = surplus % demand_count;
+    let mut k = 0;
+    for i in 0..col_count {
+        if need[i] > col_widths[i] {
+            let want = need[i] - col_widths[i];
+            col_widths[i] += (share + usize::from(k < rem)).min(want);
+            k += 1;
+        }
+    }
+}
+
+fn rebuild_fragment(frag: &CellFragment, text: String) -> CellFragment {
+    match frag {
+        CellFragment::InlineMath(_, _) => CellFragment::InlineMath(text, false),
+        CellFragment::Mark(_, _) => CellFragment::Mark(text, false),
+        _ => CellFragment::Code(text, false),
     }
 }
 
@@ -159,8 +205,35 @@ pub(super) fn wrap_table_cell(frags: &[CellFragment], width: usize) -> Vec<Vec<C
             CellFragment::Code(_, adj)
             | CellFragment::InlineMath(_, adj)
             | CellFragment::Mark(_, adj) => {
-                let frag_width = frag.display_width();
                 let adj = *adj;
+                let text = frag.rendered_text();
+                let frag_width = display_width(&text) + 2;
+
+                if frag_width > width {
+                    if !current_line.is_empty() || current_width > 0 {
+                        lines.push(std::mem::take(&mut current_line));
+                        current_width = 0;
+                    }
+                    glue = false;
+                    let inner = width.saturating_sub(2).max(1);
+                    let mut chunk = String::new();
+                    let mut chunk_width = 0usize;
+                    for ch in text.chars() {
+                        let ch_width = UnicodeWidthChar::width(ch).unwrap_or(0);
+                        if chunk_width + ch_width > inner && !chunk.is_empty() {
+                            lines.push(vec![rebuild_fragment(frag, std::mem::take(&mut chunk))]);
+                            chunk_width = 0;
+                        }
+                        chunk.push(ch);
+                        chunk_width += ch_width;
+                    }
+                    if !chunk.is_empty() {
+                        current_line.push(rebuild_fragment(frag, chunk));
+                        current_width = chunk_width + 2;
+                    }
+                    continue;
+                }
+
                 let sep = if current_width == 0 || adj { 0 } else { 1 };
                 if current_width + sep + frag_width > width && current_width > 0 {
                     lines.push(std::mem::take(&mut current_line));
