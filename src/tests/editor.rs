@@ -188,6 +188,39 @@ fn new_tab_command_iterm_no_printf() {
 }
 
 #[test]
+fn selection_modifier_label_iterm_is_option() {
+    assert_eq!(
+        selection_modifier_label(&TerminalEmulator::MacTerminal("iTerm.app".into())),
+        "option+drag"
+    );
+    assert_eq!(
+        selection_modifier_label(&TerminalEmulator::MacTerminal("iTerm2".into())),
+        "option+drag"
+    );
+}
+
+#[test]
+fn selection_modifier_label_apple_terminal_is_shift() {
+    assert_eq!(
+        selection_modifier_label(&TerminalEmulator::MacTerminal("Apple_Terminal".into())),
+        "shift+drag"
+    );
+}
+
+#[test]
+fn selection_modifier_label_other_terminals_are_shift() {
+    for term in [
+        TerminalEmulator::Kitty,
+        TerminalEmulator::GnomeTerminal,
+        TerminalEmulator::WindowsTerminal,
+        TerminalEmulator::Termux,
+        TerminalEmulator::Unknown,
+    ] {
+        assert_eq!(selection_modifier_label(&term), "shift+drag");
+    }
+}
+
+#[test]
 fn new_tab_command_iterm2_no_printf() {
     let script = mac_tab_script("vim", "/tmp/test.md", "iTerm2");
     assert!(!script.contains("printf"));

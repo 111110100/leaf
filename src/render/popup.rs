@@ -78,6 +78,9 @@ pub(super) fn popup_footer_line(segments: &[&'static str], bg: Color) -> Line<'s
 pub(super) fn render_help_popup(f: &mut Frame, _app: &App) {
     let theme = app_theme();
     let area = centered_rect(55, 24, f.area());
+
+    let select_hint =
+        crate::editor::selection_modifier_label(&crate::editor::detect_terminal_emulator());
     let section_style = Style::default()
         .fg(theme.ui.toc_primary_active)
         .add_modifier(Modifier::BOLD);
@@ -97,28 +100,28 @@ pub(super) fn render_help_popup(f: &mut Frame, _app: &App) {
         )]),
         Line::from(""),
         Line::from(vec![Span::styled(
-            "Navigation                   Mouse",
+            "Navigation                  Mouse",
             section_style,
         )]),
         Line::from(vec![
             Span::styled("j/k, ↑/↓   ", key_style),
             Span::styled("scroll", text_style),
-            Span::raw("            "),
-            Span::styled("dbl-click  ", key_style),
+            Span::raw("           "),
+            Span::styled("dbl-click   ", key_style),
             Span::styled("copy link", text_style),
         ]),
         Line::from(vec![
             Span::styled("u/d        ", key_style),
             Span::styled("page up/down", text_style),
-            Span::raw("      "),
-            Span::styled("ctrl+click ", key_style),
+            Span::raw("     "),
+            Span::styled("ctrl+click  ", key_style),
             Span::styled("open link", text_style),
         ]),
         Line::from(vec![
             Span::styled("g/G        ", key_style),
             Span::styled("top/bottom", text_style),
-            Span::raw("        "),
-            Span::styled("shift+slct ", key_style),
+            Span::raw("       "),
+            Span::styled(format!("{select_hint:<12}"), key_style),
             Span::styled("select text", text_style),
         ]),
         Line::from(vec![
@@ -127,21 +130,21 @@ pub(super) fn render_help_popup(f: &mut Frame, _app: &App) {
         ]),
         Line::from(""),
         Line::from(vec![
-            Span::styled("Search                       ", section_style),
+            Span::styled("Search                      ", section_style),
             Span::styled("Watch", section_style),
         ]),
         Line::from(vec![
             Span::styled("ctrl+f     ", key_style),
             Span::styled("find", text_style),
-            Span::raw("              "),
-            Span::styled("ctrl+w, w  ", key_style),
+            Span::raw("             "),
+            Span::styled("ctrl+w, w   ", key_style),
             Span::styled("toggle", text_style),
         ]),
         Line::from(vec![
             Span::styled("n/N        ", key_style),
             Span::styled("next/prev", text_style),
-            Span::raw("         "),
-            Span::styled("ctrl+r, r  ", key_style),
+            Span::raw("        "),
+            Span::styled("ctrl+r, r   ", key_style),
             Span::styled("reload", text_style),
         ]),
         Line::from(""),
@@ -149,36 +152,36 @@ pub(super) fn render_help_popup(f: &mut Frame, _app: &App) {
         Line::from(vec![
             Span::styled("shift+e    ", key_style),
             Span::styled("editor picker", text_style),
-            Span::raw("     "),
-            Span::styled("ctrl+e     ", key_style),
+            Span::raw("    "),
+            Span::styled("ctrl+e      ", key_style),
             Span::styled("edit", text_style),
         ]),
         Line::from(vec![
             Span::styled("shift+l    ", key_style),
             Span::styled("line number", text_style),
-            Span::raw("       "),
-            Span::styled("ctrl+l     ", key_style),
+            Span::raw("      "),
+            Span::styled("ctrl+l      ", key_style),
             Span::styled("goto", text_style),
         ]),
         Line::from(vec![
             Span::styled("shift+p    ", key_style),
             Span::styled("file browser", text_style),
-            Span::raw("      "),
-            Span::styled("ctrl+p     ", key_style),
+            Span::raw("     "),
+            Span::styled("ctrl+p      ", key_style),
             Span::styled("pick", text_style),
         ]),
         Line::from(vec![
             Span::styled("shift+t    ", key_style),
             Span::styled("theme picker", text_style),
-            Span::raw("      "),
-            Span::styled("?          ", key_style),
+            Span::raw("     "),
+            Span::styled("?           ", key_style),
             Span::styled("help", text_style),
         ]),
         Line::from(vec![
             Span::styled("p          ", key_style),
             Span::styled("path viewer", text_style),
-            Span::raw("       "),
-            Span::styled("q          ", key_style),
+            Span::raw("      "),
+            Span::styled("q           ", key_style),
             Span::styled("quit", text_style),
         ]),
         Line::from(vec![
