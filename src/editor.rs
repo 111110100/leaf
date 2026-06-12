@@ -193,6 +193,18 @@ pub(crate) fn detect_terminal_emulator() -> TerminalEmulator {
     TerminalEmulator::Unknown
 }
 
+const SELECT_HINT_SHIFT: &str = "shift+drag";
+const SELECT_HINT_OPTION: &str = "option+drag";
+
+pub(crate) fn selection_modifier_label(emulator: &TerminalEmulator) -> &'static str {
+    match emulator {
+        TerminalEmulator::MacTerminal(tp) if tp == "iTerm.app" || tp == "iTerm2" => {
+            SELECT_HINT_OPTION
+        }
+        _ => SELECT_HINT_SHIFT,
+    }
+}
+
 pub(crate) fn resolve_editor(cli_editor: Option<&str>, config_editor: Option<&str>) -> String {
     let raw = if let Some(e) = cli_editor {
         e.to_string()
