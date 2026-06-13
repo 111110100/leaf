@@ -231,29 +231,30 @@ See [`gruvbox.toml`](gruvbox.toml) for a complete example with all available col
 | `Ctrl+L` | Go to line | `Ctrl+P` | Open fuzzy picker |
 | `Ctrl+F` / `/` | Find | `Ctrl+E` | Open in editor |
 | `n` / `N` | Next / prev match | `Ctrl+Click` | Open link |
-| `r` | Force reload (watch mode) | `Dbl-Click` | Copy link |
-| `q` | Quit | `Shift+Sel` | Select text |
+| `w` | Toggle watch mode | `Double-Click` | Copy link |
+| `r` | Force reload (watch mode) | `Shift+Drag` | Select text |
+| `q` | Quit | `Option+Drag` | Select text (iTerm2) |
 
 ## Features
 
-- **Live preview**  :  *Watch mode with automatic reload and visual feedback*.
-- **File picker**  :  *Fuzzy Markdown picker, directory browser, and watch after selection*.
-- **Editor integration**  :  *Open the current file in your preferred editor*.
-- **Frontmatter support**  :  *YAML frontmatter rendered as a table (horizontal or vertical based on key count)*.
-- **Rich Markdown rendering**  :  *Tables, lists, blockquotes, rules, bold, italic, and strikethrough*.
-- **GitHub extras**  :  *Alert callouts, task list checkboxes, and `==mark==` text highlighting*.
-- **Extra file types**  :  *Open any file; code files get syntax highlighting, text files render as Markdown*.
-- **Syntax highlighting**  :  *Common aliases like `py`, `cpp`, `json`, `toml`, `ps1`, `dockerfile`*.
-- **Line numbers**  :  *Toggle display with `Shift+L`, jump to a line with `Ctrl+L`*.
-- **LaTeX support**  :  *Inline, block, and `latex` / `tex` code blocks rendered as formulas*.
-- **Mermaid diagrams**  :  *`mermaid` code blocks rendered as ASCII diagrams*.
-- **Clickable links**  :  *`Ctrl+Click` to open, double-click to copy, hover feedback*.
-- **Navigation**  :  *TOC sidebar, active section tracking, heading jumps, and search*.
-- **Terminal UX**  :  *Theme picker, help popup, file path popup, mouse and keyboard support*.
-- **Custom themes**  :  *TOML theme files inheriting from built-in presets with color overrides*.
-- **Inline mode**  :  *Render to stdout with `--inline` for pipes and fzf previews*.
-- **Shell completions**  :  *Tab completion for bash, zsh, fish, and PowerShell via `leaf --auto-complete`*.
-- **CLI friendly**  :  *stdin support and `leaf --update` with SHA256 verification*.
+- **Live preview** : *Watch mode with automatic reload and visual feedback*.
+- **File picker** : *Fuzzy Markdown picker, directory browser, and watch after selection*.
+- **Editor integration** : *Open the current file in your preferred editor*.
+- **Frontmatter support** : *YAML frontmatter rendered as a table (horizontal or vertical based on key count)*.
+- **Rich Markdown rendering** : *Tables, lists, blockquotes, rules, bold, italic, and strikethrough*.
+- **GitHub extras** : *Alert callouts, task list checkboxes, and `==mark==` text highlighting*.
+- **Extra file types** : *Open any file; code files get syntax highlighting, text files render as Markdown*.
+- **Syntax highlighting** : *Common aliases like `py`, `cpp`, `json`, `toml`, `ps1`, `dockerfile`*.
+- **Line numbers** : *Toggle display with `Shift+L`, jump to a line with `Ctrl+L`*.
+- **LaTeX support** : *Inline, block, and `latex` / `tex` code blocks rendered as formulas*.
+- **Mermaid diagrams** : *`mermaid` code blocks rendered as ASCII diagrams*.
+- **Clickable links** : *`Ctrl+Click` to open, double-click to copy, hover feedback*.
+- **Navigation** : *TOC sidebar, active section tracking, heading jumps, and search*.
+- **Terminal UX** : *Theme picker, help popup, file path popup, mouse and keyboard support*.
+- **Custom themes** : *TOML theme files inheriting from built-in presets with color overrides*.
+- **Inline mode** : *Render to stdout with `--inline` for pipes and fzf previews*.
+- **Shell completions** : *Tab completion for bash, zsh, fish, and PowerShell via `leaf --auto-complete`*.
+- **CLI friendly** : *stdin support and `leaf --update` with SHA256 verification*.
 
 ## Typical AI Workflow
 
