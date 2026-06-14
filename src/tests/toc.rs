@@ -96,56 +96,112 @@ fn frontmatter_is_ignored_in_toc() {
 }
 
 #[test]
-fn toc_hides_single_h1_when_h2_entries_exist() {
-    let toc = vec![
-        TocEntry {
-            level: 1,
-            title: "Doc Title".to_string(),
-            line: 0,
-        },
-        TocEntry {
-            level: 2,
-            title: "Install".to_string(),
-            line: 10,
-        },
-    ];
-
-    assert!(should_hide_single_h1(&toc));
-    assert_eq!(toc_display_level(2, true, false), 1);
-    assert_eq!(toc_display_level(3, true, false), 2);
+fn toc_hides_unique_top_and_promotes_when_shallow() {
+    let toc = toc(&[(1, 0), (2, 10), (2, 20)]);
+    let levels = toc_levels(&toc).unwrap();
+    assert_eq!(levels.root, 2);
+    assert_eq!(levels.sub, None);
+    assert_eq!(levels.display_level(1), None);
+    assert_eq!(levels.display_level(2), Some(1));
 }
 
 #[test]
-fn toc_keeps_single_h1_when_no_h2_entries_exist() {
-    let toc = vec![TocEntry {
-        level: 1,
-        title: "Doc Title".to_string(),
-        line: 0,
-    }];
-
-    assert!(!should_hide_single_h1(&toc));
+fn toc_hides_unique_top_and_shows_two_paliers() {
+    let toc = toc(&[(1, 0), (2, 10), (3, 15)]);
+    let levels = toc_levels(&toc).unwrap();
+    assert_eq!(levels.root, 2);
+    assert_eq!(levels.sub, Some(3));
+    assert_eq!(levels.display_level(1), None);
+    assert_eq!(levels.display_level(2), Some(1));
+    assert_eq!(levels.display_level(3), Some(2));
 }
 
 #[test]
-fn toc_promotes_h2_when_document_has_no_h1() {
-    let toc = vec![
-        TocEntry {
-            level: 2,
-            title: "Build & install".to_string(),
-            line: 0,
-        },
-        TocEntry {
-            level: 3,
-            title: "Android".to_string(),
-            line: 4,
-        },
-    ];
+fn toc_keeps_single_heading_as_root() {
+    let toc = toc(&[(1, 0)]);
+    let levels = toc_levels(&toc).unwrap();
+    assert_eq!(levels.root, 1);
+    assert_eq!(levels.sub, None);
+    assert_eq!(levels.display_level(1), Some(1));
+}
 
-    assert!(should_promote_h2_when_no_h1(&toc));
-    assert_eq!(toc_display_level(2, false, true), 1);
-    assert_eq!(toc_display_level(3, false, true), 2);
+#[test]
+fn toc_keeps_non_unique_top_as_root() {
+    let toc = toc(&[(2, 0), (2, 10), (3, 14)]);
+    let levels = toc_levels(&toc).unwrap();
+    assert_eq!(levels.root, 2);
+    assert_eq!(levels.sub, Some(3));
+}
+
+#[test]
+fn toc_promotes_unique_deep_root() {
+    let toc = toc(&[(3, 0), (4, 5), (5, 10)]);
+    let levels = toc_levels(&toc).unwrap();
+    assert_eq!(levels.root, 4);
+    assert_eq!(levels.sub, Some(5));
+    assert_eq!(levels.display_level(3), None);
+    assert_eq!(levels.display_level(4), Some(1));
+    assert_eq!(levels.display_level(5), Some(2));
+}
+
+#[test]
+fn toc_deep_non_unique_top_is_root() {
+    let toc = toc(&[(3, 0), (3, 10), (4, 14)]);
+    let levels = toc_levels(&toc).unwrap();
+    assert_eq!(levels.root, 3);
+    assert_eq!(levels.sub, Some(4));
+}
+
+#[test]
+fn toc_promotion_is_not_recursive() {
+    let toc = toc(&[(1, 0), (2, 5), (3, 8), (3, 12)]);
+    let levels = toc_levels(&toc).unwrap();
+    assert_eq!(levels.root, 2);
+    assert_eq!(levels.sub, Some(3));
+    assert_eq!(levels.display_level(1), None);
+    assert_eq!(levels.display_level(2), Some(1));
+    assert_eq!(levels.display_level(3), Some(2));
+}
+
+#[test]
+fn toc_ignores_level_gaps_two_paliers() {
+    let toc = toc(&[(1, 0), (3, 5), (3, 10)]);
+    let levels = toc_levels(&toc).unwrap();
+    assert_eq!(levels.root, 3);
+    assert_eq!(levels.sub, None);
+    assert_eq!(levels.display_level(1), None);
+    assert_eq!(levels.display_level(3), Some(1));
+}
+
+#[test]
+fn toc_ignores_level_gaps_three_paliers() {
+    let toc = toc(&[(1, 0), (2, 5), (2, 9), (4, 12)]);
+    let levels = toc_levels(&toc).unwrap();
+    assert_eq!(levels.root, 2);
+    assert_eq!(levels.sub, Some(4));
+    assert_eq!(levels.display_level(2), Some(1));
+    assert_eq!(levels.display_level(4), Some(2));
+}
+
+#[test]
+fn toc_sub_is_next_present_palier() {
+    let toc = toc(&[(2, 0), (2, 5), (4, 9)]);
+    let levels = toc_levels(&toc).unwrap();
+    assert_eq!(levels.root, 2);
+    assert_eq!(levels.sub, Some(4));
+}
+
+#[test]
+fn toc_levels_empty_returns_none() {
+    assert!(toc_levels(&[]).is_none());
+}
+
+#[test]
+fn normalize_keeps_top_three_paliers() {
+    let toc = toc(&[(2, 0), (3, 5), (4, 10), (5, 15)]);
     let normalized = normalize_toc(toc);
-    assert_eq!(normalized.len(), 2);
-    assert_eq!(normalized[0].level, 2);
-    assert_eq!(normalized[1].level, 3);
+    assert_eq!(
+        normalized.iter().map(|e| e.level).collect::<Vec<_>>(),
+        vec![2, 3, 4]
+    );
 }

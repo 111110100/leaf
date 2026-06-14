@@ -5,33 +5,50 @@ pub(crate) struct TocEntry {
     pub(crate) line: usize,
 }
 
-pub(crate) fn should_hide_single_h1(toc: &[TocEntry]) -> bool {
-    let h1_count = toc.iter().filter(|entry| entry.level == 1).count();
-    let has_h2 = toc.iter().any(|entry| entry.level == 2);
-    h1_count == 1 && has_h2
+pub(crate) struct TocLevels {
+    pub(crate) root: u8,
+    pub(crate) sub: Option<u8>,
 }
 
-pub(crate) fn should_promote_h2_when_no_h1(toc: &[TocEntry]) -> bool {
-    !toc.iter().any(|entry| entry.level == 1) && toc.iter().any(|entry| entry.level == 2)
-}
-
-pub(crate) fn toc_display_level(level: u8, hide_single_h1: bool, promote_h2_root: bool) -> u8 {
-    if hide_single_h1 || promote_h2_root {
-        match level {
-            2 => 1,
-            3 => 2,
-            _ => level,
+impl TocLevels {
+    pub(crate) fn display_level(&self, level: u8) -> Option<u8> {
+        if level == self.root {
+            Some(1)
+        } else if Some(level) == self.sub {
+            Some(2)
+        } else {
+            None
         }
-    } else {
-        level
     }
+}
+
+fn distinct_levels(toc: &[TocEntry]) -> Vec<u8> {
+    let mut levels: Vec<u8> = toc.iter().map(|e| e.level).collect();
+    levels.sort_unstable();
+    levels.dedup();
+    levels
+}
+
+pub(crate) fn toc_levels(toc: &[TocEntry]) -> Option<TocLevels> {
+    let levels = distinct_levels(toc);
+    let &top = levels.first()?;
+    let top_unique = toc.iter().filter(|e| e.level == top).count() == 1;
+    let root_idx = if top_unique && levels.len() >= 2 {
+        1
+    } else {
+        0
+    };
+    Some(TocLevels {
+        root: levels[root_idx],
+        sub: levels.get(root_idx + 1).copied(),
+    })
 }
 
 pub(crate) fn normalize_toc(mut toc: Vec<TocEntry>) -> Vec<TocEntry> {
-    if should_hide_single_h1(&toc) || should_promote_h2_when_no_h1(&toc) {
-        toc.retain(|entry| matches!(entry.level, 1..=3));
-    } else {
-        toc.retain(|entry| matches!(entry.level, 1..=2));
-    }
+    let levels = distinct_levels(&toc);
+    let Some(&max_keep) = levels.get(2).or_else(|| levels.last()) else {
+        return toc;
+    };
+    toc.retain(|entry| entry.level <= max_keep);
     toc
 }
