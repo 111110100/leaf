@@ -1,7 +1,7 @@
 use crate::{
     markdown::{
         build_searchable_lines,
-        toc::{should_hide_single_h1, should_promote_h2_when_no_h1, toc_display_level, TocEntry},
+        toc::{toc_levels, TocEntry},
         LinkSpan,
     },
     render::{build_status_bar, build_toc_line_with_index, toc_header_line},
@@ -404,8 +404,12 @@ impl App {
     }
 
     pub(crate) fn active_toc_index(&self) -> Option<usize> {
-        let hide_single_h1 = should_hide_single_h1(&self.toc);
-        let is_visible = |entry: &&TocEntry| !(hide_single_h1 && entry.level == 1);
+        let levels = toc_levels(&self.toc);
+        let is_visible = |entry: &&TocEntry| {
+            levels
+                .as_ref()
+                .is_some_and(|l| l.display_level(entry.level).is_some())
+        };
 
         let mut first_visible = None;
         let mut active = None;
@@ -463,8 +467,7 @@ impl App {
     }
 
     pub(crate) fn refresh_toc_cache(&mut self) {
-        let hide_single_h1 = should_hide_single_h1(&self.toc);
-        let promote_h2_root = should_promote_h2_when_no_h1(&self.toc);
+        let levels = toc_levels(&self.toc);
         let active_idx = self.active_toc_index();
         if self.toc_active_idx == active_idx && !self.toc_display_lines.is_empty() {
             return;
@@ -476,9 +479,8 @@ impl App {
             .toc
             .iter()
             .enumerate()
-            .filter(|(_, entry)| !(hide_single_h1 && entry.level == 1))
-            .map(|(idx, entry)| {
-                let display_level = toc_display_level(entry.level, hide_single_h1, promote_h2_root);
+            .filter_map(|(idx, entry)| {
+                let display_level = levels.as_ref()?.display_level(entry.level)?;
                 let line = build_toc_line_with_index(
                     entry,
                     display_level,
@@ -488,7 +490,7 @@ impl App {
                 if display_level == 1 {
                     top_level_index += 1;
                 }
-                line
+                Some(line)
             })
             .collect();
     }
