@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-version -->
 
+## [[1.24.2](https://github.com/RivoLink/leaf/releases/tag/1.24.2)] - 2026-06-14
+
+### Docs
+
+- improve readme content ([#178](https://github.com/RivoLink/leaf/pull/178))
+
+### Fixed
+
+- toc generalize heading levels ([#181](https://github.com/RivoLink/leaf/pull/181))
+- wrap long inline-code in table ([#176](https://github.com/RivoLink/leaf/pull/176))
+- detect Helix editor by 'hx' ([#175](https://github.com/RivoLink/leaf/pull/175))
+
+### Changed
+
+- terminal text selection hint ([#177](https://github.com/RivoLink/leaf/pull/177))
+
 ## [[1.24.1](https://github.com/RivoLink/leaf/releases/tag/1.24.1)] - 2026-06-08
 
 ### Docs
